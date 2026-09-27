@@ -1,7 +1,7 @@
 {
   "name": "luy-ai",
-  "version": "1.0.0",
-  "description": "Luy AI App",
+  "version": "2.0.0",
+  "description": "Luy AI — Smart Business App ខ្មែរ",
   "main": "server.js",
   "scripts": { "start": "node server.js" },
   "dependencies": {
@@ -10,6 +10,8 @@
     "@google/generative-ai": "^0.21.0",
     "multer": "^1.4.5-lts.1",
     "cors": "^2.8.5",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
   }
 }
