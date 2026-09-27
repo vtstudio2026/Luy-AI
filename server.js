@@ -26,6 +26,20 @@ const upload = multer({ dest: 'uploads/', limits: { fileSize: 5 * 1024 * 1024 } 
 // Ensure uploads folder exists
 if (!fs.existsSync('uploads')) fs.mkdirSync('uploads', { recursive: true });
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Root fallback
+app.get('/', (req, res) => {
+  const indexPath = path.join(__dirname, 'public', 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('⚠️ Missing public/index.html — upload it to the public/ folder in GitHub.');
+  }
+});;
+
 
 
 // ==================== INIT DATABASE ====================
