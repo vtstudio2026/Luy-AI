@@ -36,6 +36,16 @@ const db = {
 };
 
 async function initDB() {
+  // Add user_id column to existing tables if missing (v1 → v2 migration)
+  await pool.query(`
+    ALTER TABLE IF EXISTS products ADD COLUMN IF NOT EXISTS user_id TEXT;
+    ALTER TABLE IF EXISTS orders ADD COLUMN IF NOT EXISTS user_id TEXT;
+    ALTER TABLE IF EXISTS customers ADD COLUMN IF NOT EXISTS user_id TEXT;
+    ALTER TABLE IF EXISTS invoices ADD COLUMN IF NOT EXISTS user_id TEXT;
+    ALTER TABLE IF EXISTS expenses ADD COLUMN IF NOT EXISTS user_id TEXT;
+    ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS user_id TEXT;
+  `).catch(()=>{});
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
