@@ -23,8 +23,10 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 // Multer
 const upload = multer({ dest: 'uploads/', limits: { fileSize: 5 * 1024 * 1024 } });
 
-app.use(express.json());
-app.use(express.static('public'));
+// Ensure uploads folder exists
+if (!fs.existsSync('uploads')) fs.mkdirSync('uploads', { recursive: true });
+
+
 
 // ==================== INIT DATABASE ====================
 async function initDB() {
@@ -642,11 +644,18 @@ app.post('/api/ai/tts-audio', authenticateToken, async (req, res) => {
     const { text, voice } = req.body;
     if (!text) return res.status(400).json({ error: 'Text required' });
 
+    // Check msedge-tts available
+    let MsEdgeTTS, OUTPUT_FORMAT;
+    try {
+      ({ MsEdgeTTS, OUTPUT_FORMAT } = require('msedge-tts'));
+    } catch(e) {
+      return res.status(500).json({ error: 'TTS package not installed. Run: npm install msedge-tts' });
+    }
+
     const selectedVoice = voice === 'sreymom'
       ? 'km-KH-SreymomNeural'
       : 'km-KH-PisethNeural';
 
-    const { MsEdgeTTS, OUTPUT_FORMAT } = require('msedge-tts');
     const tts = new MsEdgeTTS();
     await tts.setMetadata(selectedVoice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
 
@@ -664,9 +673,10 @@ app.post('/api/ai/tts-audio', authenticateToken, async (req, res) => {
     const stream = fs.createReadStream(audioPath);
     stream.pipe(res);
     stream.on('end', () => { try { fs.unlinkSync(audioPath); } catch(e) {} });
+    stream.on('error', (e) => { res.status(500).json({ error: e.message }); });
   } catch (err) {
     try { fs.unlinkSync(audioPath); } catch(e) {}
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err.message || 'TTS failed' });
   }
 });
 
