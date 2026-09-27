@@ -231,6 +231,7 @@ tr:hover td{background:var(--hover)}
         <div class="nav-item" onclick="showPage('profit')"><span class="icon">💰</span>Profit</div>
         <div class="nav-item" onclick="showPage('marketing')"><span class="icon">📣</span>Marketing</div>
         <div class="nav-item" onclick="showPage('freelancer')"><span class="icon">💻</span>Freelancer</div>
+        <div class="nav-item" id="admin-nav" style="display:none;border-top:1px solid rgba(255,255,255,.1);margin-top:8px" onclick="showPage('admin')"><span class="icon">👑</span>Admin Panel</div>
         <div class="nav-item" onclick="showPage('reports')"><span class="icon">📈</span>Reports</div>
       </nav>
       <div class="sidebar-bottom">
@@ -435,6 +436,57 @@ tr:hover td{background:var(--hover)}
         </div>
       </div>
 
+
+      <!-- ADMIN PANEL -->
+      <div class="page" id="page-admin">
+        <div class="topbar">
+          <div class="page-title">👑 Admin Management</div>
+          <div style="background:#d63031;color:#fff;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700">🔐 ADMIN ONLY</div>
+        </div>
+
+        <!-- System Stats -->
+        <div class="stats-grid" id="admin-stats"></div>
+
+        <!-- Charts Row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div class="card">
+            <div class="card-header"><span class="card-title">📈 Daily Signups (30 days)</span></div>
+            <div class="chart-container"><canvas id="admin-chart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">📊 Plan Distribution</span></div>
+            <div class="chart-container"><canvas id="plan-chart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">👥 All Users (<span id="user-count">0</span>)</span>
+            <input class="form-control" placeholder="🔍 Search users..." oninput="filterTable(this,'admin-users-table')" style="width:200px">
+          </div>
+          <div class="table-wrap">
+            <table id="admin-users-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Shop</th>
+                  <th>Plan</th>
+                  <th>Orders</th>
+                  <th>Sales</th>
+                  <th>Products</th>
+                  <th>Joined</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /main -->
   </div>
 </div>
@@ -588,6 +640,7 @@ function initApp(user){
   document.getElementById('shop-name-display').textContent=user.shop_name||'ហាងរបស់ខ្ញុំ';
   document.getElementById('user-avatar').textContent=(user.name||'U')[0].toUpperCase();
   loadDashboard();
+  checkAdmin();
 }
 
 function headers(){return{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'};}
@@ -601,7 +654,7 @@ function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.getAttribute('onclick')?.includes("'"+name+"'")));
-  const loaders={dashboard:loadDashboard,products:loadProducts,orders:loadOrders,invoices:loadInvoices,customers:loadCustomers,profit:loadProfit,freelancer:loadProjects,reports:()=>loadReports('month')};
+  const loaders={dashboard:loadDashboard,products:loadProducts,orders:loadOrders,invoices:loadInvoices,customers:loadCustomers,profit:loadProfit,freelancer:loadProjects,reports:()=>loadReports('month'),admin:loadAdmin};
   if(loaders[name]) loaders[name]();
   document.getElementById('sidebar').classList.remove('open');
 }
@@ -932,6 +985,84 @@ async function getAIAnalysis(){
   const data=await fetch('/api/reports?period='+currentReport.period,{headers:hdr()}).then(r=>r.json());
   const r=await fetch('/api/ai/report',{method:'POST',headers:headers(),body:JSON.stringify({...data,period:currentReport.period})}).then(r=>r.json());
   const el=document.getElementById('ai-analysis'); el.textContent=r.analysis; el.style.display='block';
+}
+
+
+// ── ADMIN ────────────────────────────────────────────────────────────
+let adminChartInst=null, planChartInst=null;
+
+async function checkAdmin(){
+  try{
+    const r=await fetch('/api/admin/check',{headers:hdr()}).then(r=>r.json());
+    if(r.isAdmin) document.getElementById('admin-nav').style.display='flex';
+  }catch{}
+}
+
+async function loadAdmin(){
+  const [stats,users]=await Promise.all([
+    fetch('/api/admin/stats',{headers:hdr()}).then(r=>r.json()),
+    fetch('/api/admin/users',{headers:hdr()}).then(r=>r.json())
+  ]);
+
+  // Stats cards
+  document.getElementById('admin-stats').innerHTML=`
+    <div class="stat-card" style="--accent:#6c5ce7"><span class="stat-ico">👥</span><div class="stat-val">${stats.totalUsers}</div><div class="stat-lbl">Total Users</div></div>
+    <div class="stat-card" style="--accent:#00b894"><span class="stat-ico">🛒</span><div class="stat-val">${stats.totalOrders}</div><div class="stat-lbl">Total Orders</div></div>
+    <div class="stat-card" style="--accent:#00cec9"><span class="stat-ico">💰</span><div class="stat-val">${fmt(stats.totalRevenue)}</div><div class="stat-lbl">Total Revenue</div></div>
+    <div class="stat-card" style="--accent:#fdcb6e"><span class="stat-ico">📦</span><div class="stat-val">${stats.totalProducts}</div><div class="stat-lbl">Products Listed</div></div>
+    <div class="stat-card" style="--accent:#b2bec3"><span class="stat-ico">🆓</span><div class="stat-val">${stats.freeUsers}</div><div class="stat-lbl">Free Users</div></div>
+    <div class="stat-card" style="--accent:#e17055"><span class="stat-ico">💎</span><div class="stat-val">${stats.proUsers}</div><div class="stat-lbl">Pro Users</div></div>
+  `;
+
+  // Signup chart
+  if(stats.dailySignups?.length>0){
+    const labels=stats.dailySignups.map(x=>x.date?.toString().slice(5,10));
+    const vals=stats.dailySignups.map(x=>+x.new_users||0);
+    adminChartInst=drawChart('admin-chart',labels,vals,'New Users','#6c5ce7',adminChartInst);
+  }
+
+  // Plan pie chart
+  const planCtx=document.getElementById('plan-chart')?.getContext('2d');
+  if(planCtx){
+    if(planChartInst) planChartInst.destroy();
+    planChartInst=new Chart(planCtx,{type:'doughnut',data:{
+      labels:['Free','Pro'],
+      datasets:[{data:[stats.freeUsers,stats.proUsers],backgroundColor:['#b2bec3','#6c5ce7'],borderWidth:0}]
+    },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+  }
+
+  // Users table
+  document.getElementById('user-count').textContent=users.length;
+  const rows=users.map((u,i)=>`<tr>
+    <td>${i+1}</td>
+    <td><strong>${u.name}</strong></td>
+    <td style="font-size:12px">${u.email}</td>
+    <td>${u.shop_name||'-'}</td>
+    <td>
+      <select onchange="changePlan('${u.id}',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;background:var(--input-bg);color:var(--text);font-size:12px">
+        ${['free','pro','business'].map(p=>`<option value="${p}" ${u.plan===p?'selected':''}>${p==='free'?'🆓':p==='pro'?'💎':'🏆'} ${p}</option>`).join('')}
+      </select>
+    </td>
+    <td>${u.total_orders}</td>
+    <td>${fmt(u.total_sales)}</td>
+    <td>${u.total_products}</td>
+    <td style="font-size:11px;color:var(--sub)">${u.created_at?.toString().slice(0,10)}</td>
+    <td>
+      <button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}','${u.name}')">🗑</button>
+    </td>
+  </tr>`).join('');
+  document.getElementById('admin-users-body').innerHTML=rows||'<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--sub)">No users</td></tr>';
+}
+
+async function changePlan(id,plan){
+  await fetch('/api/admin/users/'+id+'/plan',{method:'PUT',headers:headers(),body:JSON.stringify({plan})});
+  alert('✅ Plan updated to '+plan+'!');
+}
+
+async function deleteUser(id,name){
+  if(!confirm('DELETE user '+name+'?\n⚠️ This will delete ALL their data!')) return;
+  await fetch('/api/admin/users/'+id,{method:'DELETE',headers:hdr()});
+  loadAdmin();
 }
 
 // ── FILTER ───────────────────────────────────────────────────────────
