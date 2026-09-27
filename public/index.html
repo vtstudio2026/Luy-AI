@@ -1287,9 +1287,11 @@ async function previewAudio() {
   if (!text || text === 'AI result will appear here...') return alert('Generate AI content first!');
 
   const player = document.getElementById('audioPreview');
+  const statusEl = document.getElementById('videoStatus');
   player.style.display = 'block';
   player.src = '';
-  player.controls = true;
+  statusEl.style.display = 'block';
+  statusEl.innerHTML = '<div class="loading">🎙️ Generating voice preview...</div>';
 
   try {
     const r = await fetch('/api/ai/tts-audio', {
@@ -1302,15 +1304,22 @@ async function previewAudio() {
     });
 
     if (!r.ok) {
-      const err = await r.json();
-      return alert('Error: ' + err.error);
+      let errMsg = 'Server error ' + r.status;
+      try {
+        const errJson = await r.json();
+        errMsg = errJson.error || errMsg;
+      } catch(e) {}
+      statusEl.innerHTML = `<span style="color:red">❌ ${errMsg}</span>`;
+      return;
     }
 
     const blob = await r.blob();
     player.src = URL.createObjectURL(blob);
     player.play();
+    statusEl.innerHTML = '✅ Playing preview!';
+    setTimeout(() => { statusEl.style.display = 'none'; }, 2000);
   } catch(e) {
-    alert('Error: ' + e.message);
+    statusEl.innerHTML = `<span style="color:red">❌ ${e.message}</span>`;
   }
 }
 
@@ -1320,7 +1329,7 @@ async function generateVideoMP4() {
 
   const status = document.getElementById('videoStatus');
   status.style.display = 'block';
-  status.innerHTML = '<div class="loading">⏳ Generating MP4 video...</div>';
+  status.innerHTML = '<div class="loading">⏳ Generating MP4 video... (~30s)</div>';
 
   try {
     const r = await fetch('/api/ai/tts-video', {
@@ -1333,15 +1342,18 @@ async function generateVideoMP4() {
     });
 
     if (!r.ok) {
-      const err = await r.json();
-      status.innerHTML = '<span style="color:red">❌ ' + err.error + '</span>';
+      let errMsg = 'Server error ' + r.status;
+      try {
+        const errJson = await r.json();
+        errMsg = errJson.error || errMsg;
+      } catch(e) {}
+      status.innerHTML = `<span style="color:red">❌ ${errMsg}</span>`;
       return;
     }
 
     const blob = await r.blob();
     const url = URL.createObjectURL(blob);
 
-    // Auto download
     const a = document.createElement('a');
     a.href = url;
     a.download = `luy-ai-${selectedVoice}-${Date.now()}.mp4`;
@@ -1350,7 +1362,7 @@ async function generateVideoMP4() {
     status.innerHTML = '✅ MP4 downloaded!';
     setTimeout(() => { status.style.display = 'none'; }, 3000);
   } catch(e) {
-    status.innerHTML = '<span style="color:red">❌ ' + e.message + '</span>';
+    status.innerHTML = `<span style="color:red">❌ ${e.message}</span>`;
   }
 }
 </script>
