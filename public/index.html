@@ -2,1073 +2,1205 @@
 <html lang="km">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>💰 Luy AI — Smart Business</title>
-<link rel="manifest" href="/manifest.json">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luy AI — Smart Business</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#f0f2f5;--card:#fff;--sidebar:#1a1a2e;--text:#1a1a2e;--sub:#888;
-  --border:#e9ecef;--primary:#6c5ce7;--success:#00b894;--danger:#d63031;
-  --warning:#fdcb6e;--input-bg:#fff;--hover:#f8f9fa;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #6c63ff;
+  --primary-dark: #5a52d5;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --bg: #f8f9ff;
+  --sidebar-bg: #1e1b4b;
+  --sidebar-text: #c7d2fe;
+  --sidebar-active: #6c63ff;
+  --card-bg: #ffffff;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --shadow: 0 2px 12px rgba(108,99,255,0.08);
 }
-[data-theme="dark"]{
-  --bg:#0d1117;--card:#161b22;--text:#e6edf3;--sub:#8b949e;
-  --border:#30363d;--input-bg:#21262d;--hover:#21262d;--sidebar:#010409;
+body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
+
+/* LAYOUT */
+.app-layout { display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px; background: var(--sidebar-bg); color: var(--sidebar-text);
+  display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0;
+  overflow-y: auto; z-index: 100;
 }
-body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);transition:.3s}
-
-/* ── AUTH PAGE ─────────────────────── */
-#auth-page{display:flex;align-items:center;justify-content:center;min-height:100vh;
-  background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)}
-.auth-box{background:rgba(255,255,255,.08);backdrop-filter:blur(20px);border-radius:20px;
-  padding:40px;width:90%;max-width:400px;border:1px solid rgba(255,255,255,.1)}
-.auth-logo{text-align:center;margin-bottom:24px}
-.auth-logo .icon{font-size:52px}
-.auth-logo h1{color:#fff;font-size:26px;font-weight:900;margin:8px 0}
-.auth-logo p{color:rgba(255,255,255,.6);font-size:13px}
-.auth-tabs{display:flex;background:rgba(255,255,255,.1);border-radius:10px;margin-bottom:24px}
-.auth-tab{flex:1;padding:10px;text-align:center;cursor:pointer;color:rgba(255,255,255,.6);
-  border-radius:10px;font-weight:600;font-size:14px;transition:.2s}
-.auth-tab.active{background:var(--primary);color:#fff}
-.auth-input{width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,.2);border-radius:10px;
-  background:rgba(255,255,255,.1);color:#fff;font-size:14px;margin-bottom:12px;outline:none}
-.auth-input::placeholder{color:rgba(255,255,255,.4)}
-.auth-input:focus{border-color:var(--primary)}
-.auth-btn{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;
-  border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s}
-.auth-btn:hover{opacity:.9;transform:translateY(-1px)}
-.auth-error{color:#ff6b6b;font-size:13px;margin-bottom:10px;display:none}
-
-/* ── APP LAYOUT ────────────────────── */
-#app-page{display:none}
-.app{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:240px;background:var(--sidebar);color:#fff;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;transition:.3s}
-.main{flex:1;overflow-y:auto;padding:20px}
-
-.sidebar-logo{padding:20px;border-bottom:1px solid rgba(255,255,255,.08);text-align:center}
-.sidebar-logo .logo-icon{font-size:38px}
-.sidebar-logo h2{font-size:17px;font-weight:800;margin:6px 0 2px}
-.shop-name{font-size:11px;color:rgba(255,255,255,.5);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;
-  transition:.2s;font-size:13.5px;color:rgba(255,255,255,.7);border-left:3px solid transparent}
-.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.08);color:#fff;border-left-color:var(--primary)}
-.nav-item .icon{font-size:17px;width:22px;text-align:center}
-
-.sidebar-bottom{padding:16px;border-top:1px solid rgba(255,255,255,.08)}
-.user-info{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
-.user-name{font-size:12px;font-weight:600;color:#fff}
-.user-email{font-size:10px;color:rgba(255,255,255,.4);overflow:hidden;text-overflow:ellipsis}
-.btn-logout{width:100%;padding:8px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);
-  border:1px solid rgba(255,255,255,.1);border-radius:8px;cursor:pointer;font-size:12px}
-.btn-logout:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
-
-/* ── TOP BAR ───────────────────────── */
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
-.page-title{font-size:22px;font-weight:800}
-.topbar-actions{display:flex;gap:10px;align-items:center}
-.dark-toggle{background:none;border:2px solid var(--border);color:var(--text);padding:8px 12px;
-  border-radius:8px;cursor:pointer;font-size:16px}
-
-/* ── CARDS ─────────────────────────── */
-.card{background:var(--card);border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:16px;border:1px solid var(--border)}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.card-title{font-size:15px;font-weight:700}
-
-/* ── STATS ─────────────────────────── */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:14px;margin-bottom:20px}
-.stat-card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 2px 12px rgba(0,0,0,.06);
-  border:1px solid var(--border);position:relative;overflow:hidden;cursor:pointer;transition:.2s}
-.stat-card:hover{transform:translateY(-2px)}
-.stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--accent,var(--primary))}
-.stat-val{font-size:22px;font-weight:800;color:var(--text)}
-.stat-lbl{font-size:11px;color:var(--sub);margin-top:4px}
-.stat-ico{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:28px;opacity:.3}
-
-/* ── BTNS ──────────────────────────── */
-.btn{padding:9px 16px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:6px}
-.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{opacity:.88}
-.btn-success{background:var(--success);color:#fff}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-warning{background:var(--warning);color:#333}
-.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
-.btn-sm{padding:5px 11px;font-size:12px}
-
-/* ── FORM ──────────────────────────── */
-.form-group{margin-bottom:14px}
-.form-group label{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.form-control{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-size:14px;transition:.2s;background:var(--input-bg);color:var(--text)}
-.form-control:focus{outline:none;border-color:var(--primary)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-
-/* ── TABLE ─────────────────────────── */
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:var(--hover);padding:10px 14px;text-align:left;font-weight:700;color:var(--sub);border-bottom:2px solid var(--border);font-size:11px;text-transform:uppercase}
-td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
-tr:hover td{background:var(--hover)}
-
-/* ── MODAL ─────────────────────────── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.modal-overlay.show{display:flex}
-.modal{background:var(--card);border-radius:16px;padding:24px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto;border:1px solid var(--border)}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.modal-title{font-size:17px;font-weight:800}
-.modal-close{cursor:pointer;font-size:22px;color:var(--sub);background:none;border:none;color:var(--text)}
-
-/* ── BADGE ─────────────────────────── */
-.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.badge-success{background:#d4edda;color:#155724}
-.badge-danger{background:#f8d7da;color:#721c24}
-.badge-warning{background:#fff3cd;color:#856404}
-
-/* ── AI ────────────────────────────── */
-.ai-result{background:linear-gradient(135deg,var(--hover),var(--card));border-radius:10px;padding:16px;
-  border-left:4px solid var(--primary);white-space:pre-wrap;font-size:13px;line-height:1.9;margin-top:12px;display:none}
-
-/* ── CHART ─────────────────────────── */
-.chart-container{position:relative;height:220px}
-
-/* ── PAGE ──────────────────────────── */
-.page{display:none}.page.active{display:block}
-
-/* ── UPLOAD ────────────────────────── */
-.upload-area{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:.2s;color:var(--sub)}
-.upload-area:hover{border-color:var(--primary);background:var(--hover)}
-.preview-img{width:100px;height:100px;object-fit:cover;border-radius:8px;margin-top:8px}
-
-/* ── PRINT ─────────────────────────── */
-@media print{
-  .sidebar,.topbar,.modal-overlay,.no-print{display:none!important}
-  .main{padding:0;margin:0}
-  #print-invoice{display:block!important}
+.sidebar-logo { padding: 24px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.sidebar-logo h2 { color: #fff; font-size: 20px; }
+.sidebar-logo span { font-size: 11px; color: var(--sidebar-text); opacity: 0.7; }
+.sidebar nav { flex: 1; padding: 12px 0; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 11px 20px;
+  cursor: pointer; transition: all 0.2s; font-size: 14px; border-left: 3px solid transparent;
 }
-#print-invoice{display:none;font-family:'Segoe UI',sans-serif;padding:30px;color:#000}
+.nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.nav-item.active { background: rgba(108,99,255,0.25); color: #fff; border-left-color: var(--primary); }
+.nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+.user-info { font-size: 13px; margin-bottom: 10px; }
+.user-info strong { color: #fff; display: block; }
+.user-info span { opacity: 0.6; font-size: 11px; }
+.btn-logout {
+  width: 100%; padding: 8px; background: rgba(255,255,255,0.1);
+  border: none; color: #fff; border-radius: 8px; cursor: pointer; font-size: 13px;
+}
+.btn-logout:hover { background: rgba(255,255,255,0.2); }
 
-/* ── NOTIFICATION ──────────────────── */
-.notif-bar{background:#fff3cd;border:1px solid #ffc107;border-radius:10px;padding:12px 16px;
-  margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:13px}
-.notif-bar.danger{background:#f8d7da;border-color:#dc3545}
+/* MAIN */
+.main { margin-left: 220px; flex: 1; padding: 28px; min-height: 100vh; }
+.page { display: none; }
+.page.active { display: block; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.page-header h2 { font-size: 22px; font-weight: 700; }
 
-/* ── MOBILE ────────────────────────── */
+/* CARDS */
+.card {
+  background: var(--card-bg); border-radius: 14px; padding: 20px;
+  box-shadow: var(--shadow); border: 1px solid var(--border);
+}
+
+/* STATS GRID */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--card-bg); border-radius: 14px; padding: 18px;
+  box-shadow: var(--shadow); border: 1px solid var(--border); text-align: center;
+}
+.stat-card .icon { font-size: 28px; margin-bottom: 8px; }
+.stat-card .value { font-size: 22px; font-weight: 700; color: var(--primary); }
+.stat-card .label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px;
+  border-radius: 8px; border: none; cursor: pointer; font-size: 13px;
+  font-weight: 600; transition: all 0.2s;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { background: #16a34a; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: #dc2626; }
+.btn-secondary { background: var(--border); color: var(--text); }
+.btn-secondary:hover { background: #cbd5e1; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-warning { background: var(--warning); color: #fff; }
+
+/* TABLE */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { padding: 12px 14px; text-align: left; color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; border-bottom: 2px solid var(--border); background: #f8f9ff; }
+td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:hover td { background: #f8f9ff; }
+
+/* BADGES */
+.badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge-success { background: #dcfce7; color: #16a34a; }
+.badge-warning { background: #fef3c7; color: #b45309; }
+.badge-danger  { background: #fee2e2; color: #dc2626; }
+.badge-info    { background: #dbeafe; color: #1d4ed8; }
+
+/* MODAL */
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto; }
+.modal.open { display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px; }
+.modal-box {
+  background: #fff; border-radius: 16px; padding: 28px;
+  width: 100%; max-width: 520px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-header h3 { font-size: 18px; font-weight: 700; }
+.modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); }
+
+/* FORM */
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: var(--text-muted); }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
+  border-radius: 8px; font-size: 14px; outline: none; transition: border 0.2s;
+  font-family: inherit;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { border-color: var(--primary); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ITEMS */
+.items-section { margin-bottom: 14px; }
+.items-section label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); }
+.item-row {
+  display: grid; grid-template-columns: 2fr 70px 90px 36px;
+  gap: 6px; margin-bottom: 6px; align-items: center;
+}
+.item-row input {
+  padding: 8px 10px; border: 1.5px solid var(--border);
+  border-radius: 8px; font-size: 13px; outline: none; width: 100%;
+}
+.item-row input:focus { border-color: var(--primary); }
+.item-remove {
+  background: #fee2e2; border: none; color: #dc2626;
+  border-radius: 8px; width: 36px; height: 36px; cursor: pointer; font-size: 14px;
+}
+.item-header {
+  display: grid; grid-template-columns: 2fr 70px 90px 36px;
+  gap: 6px; margin-bottom: 4px;
+}
+.item-header span { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; padding: 0 2px; }
+.btn-add-item {
+  margin-top: 4px; padding: 7px 14px; background: #ede9fe;
+  border: none; color: var(--primary); border-radius: 8px;
+  cursor: pointer; font-size: 13px; font-weight: 600;
+}
+.total-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-top: 2px solid var(--border); margin-top: 10px;
+}
+.total-row strong { font-size: 16px; }
+.total-row .total-val { font-size: 18px; font-weight: 700; color: var(--primary); }
+
+/* ITEMS DISPLAY */
+.items-list small { display: block; color: var(--text-muted); font-size: 12px; }
+
+/* INVOICE TABLE — no overlap */
+.inv-table { table-layout: fixed; width: 100%; }
+.inv-table td { vertical-align: middle; word-break: break-word; }
+.inv-table td:nth-child(3) { /* Items column */
+  max-width: 0; /* forces flex inside colgroup width */
+}
+.inv-table .item-tags {
+  display: flex; flex-wrap: wrap; gap: 3px;
+}
+
+/* AUTH PAGE */
+#authPage {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #1e1b4b 0%, #6c63ff 100%);
+}
+.auth-box {
+  background: #fff; border-radius: 20px; padding: 36px;
+  width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.auth-box h1 { font-size: 26px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
+.auth-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+.auth-tabs { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 2px solid var(--border); }
+.auth-tab {
+  flex: 1; padding: 10px; text-align: center; cursor: pointer;
+  font-weight: 600; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.auth-form { display: none; }
+.auth-form.active { display: block; }
+.auth-btn {
+  width: 100%; padding: 12px; background: var(--primary);
+  color: #fff; border: none; border-radius: 10px; font-size: 15px;
+  font-weight: 700; cursor: pointer; margin-top: 8px;
+}
+.auth-btn:hover { background: var(--primary-dark); }
+
+/* AI SELLER */
+.ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.ai-btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.ai-type-btn {
+  padding: 10px 8px; background: #f1f5f9; border: 2px solid transparent;
+  border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600;
+  text-align: center; transition: all 0.2s;
+}
+.ai-type-btn:hover { border-color: var(--primary); color: var(--primary); }
+.ai-type-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.ai-result {
+  background: #f8f9ff; border-radius: 10px; padding: 14px;
+  min-height: 120px; font-size: 14px; line-height: 1.7; white-space: pre-wrap;
+  border: 1.5px solid var(--border);
+}
+.loading { text-align: center; color: var(--primary); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* PROFIT CHART */
+.profit-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 20px; }
+.profit-card { text-align: center; padding: 20px; border-radius: 14px; }
+.profit-card.income { background: #dcfce7; }
+.profit-card.expense { background: #fee2e2; }
+.profit-card.profit  { background: #dbeafe; }
+.profit-card .amount { font-size: 24px; font-weight: 800; }
+.profit-card .label  { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+/* RESPONSIVE */
 @media(max-width:768px){
-  .sidebar{position:fixed;z-index:100;height:100vh;transform:translateX(-100%);transition:.3s}
-  .sidebar.open{transform:translateX(0)}
-  .hamburger{display:flex!important}
-  .form-row{grid-template-columns:1fr}
-  .stats-grid{grid-template-columns:1fr 1fr}
-  .main{padding:14px}
+  .sidebar { width: 60px; }
+  .sidebar .nav-item span, .sidebar-logo h2, .sidebar-logo span,
+  .sidebar-footer .user-info, .sidebar-footer .btn-logout { display: none; }
+  .main { margin-left: 60px; padding: 16px; }
+  .ai-grid, .form-row { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .profit-grid { grid-template-columns: 1fr; }
 }
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;
-  position:fixed;top:12px;left:12px;z-index:200;background:var(--primary);border-radius:8px}
-.hamburger span{width:20px;height:2px;background:#fff;border-radius:2px}
-
-.loading{text-align:center;padding:20px;color:var(--sub)}
-.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);
-  border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 8px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.profit-pos{color:var(--success);font-weight:700}
-.profit-neg{color:var(--danger);font-weight:700}
 </style>
 </head>
 <body>
 
-<!-- ── AUTH PAGE ───────────────────────────────────────────────────── -->
-<div id="auth-page">
+<!-- AUTH PAGE -->
+<div id="authPage">
   <div class="auth-box">
-    <div class="auth-logo">
-      <div class="icon">💰</div>
-      <h1>Luy AI</h1>
-      <p>ជំនួយការអាជីវកម្មខ្មែរ Smart AI</p>
-    </div>
+    <h1>💰 Luy AI</h1>
+    <p>ជំនួយការអាជីវកម្មខ្មែរ</p>
     <div class="auth-tabs">
-      <div class="auth-tab active" onclick="switchTab('login')">🔑 Login</div>
-      <div class="auth-tab" onclick="switchTab('register')">📝 Register</div>
+      <div class="auth-tab active" onclick="switchAuth('login')">Login</div>
+      <div class="auth-tab" onclick="switchAuth('register')">Register</div>
     </div>
-    <div id="auth-error" class="auth-error"></div>
-
-    <!-- Login Form -->
-    <div id="login-form">
-      <input class="auth-input" id="l-email" type="email" placeholder="📧 Email">
-      <input class="auth-input" id="l-pass" type="password" placeholder="🔒 Password">
-      <button class="auth-btn" onclick="doLogin()">🚀 Login</button>
+    <div id="loginForm" class="auth-form active">
+      <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Password"></div>
+      <button class="auth-btn" onclick="doLogin()">🔐 Login</button>
+      <div id="loginErr" style="color:red;font-size:13px;margin-top:8px;"></div>
     </div>
-
-    <!-- Register Form -->
-    <div id="register-form" style="display:none">
-      <input class="auth-input" id="r-name" placeholder="👤 ឈ្មោះ">
-      <input class="auth-input" id="r-shop" placeholder="🏪 ឈ្មោះហាង">
-      <input class="auth-input" id="r-email" type="email" placeholder="📧 Email">
-      <input class="auth-input" id="r-pass" type="password" placeholder="🔒 Password (min 6)">
-      <button class="auth-btn" onclick="doRegister()">✅ Create Account</button>
+    <div id="registerForm" class="auth-form">
+      <div class="form-group"><label>Name</label><input type="text" id="regName" placeholder="Your name"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="your@email.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="regPass" placeholder="Password (min 6 chars)"></div>
+      <button class="auth-btn" onclick="doRegister()">✅ Register</button>
+      <div id="regErr" style="color:red;font-size:13px;margin-top:8px;"></div>
     </div>
   </div>
 </div>
 
-<!-- ── APP PAGE ─────────────────────────────────────────────────────── -->
-<div id="app-page">
-  <div class="hamburger" onclick="toggleSidebar()">
-    <span></span><span></span><span></span>
-  </div>
-  <div class="app">
-    <!-- SIDEBAR -->
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-logo">
-        <div class="logo-icon">💰</div>
-        <h2>Luy AI</h2>
-        <div class="shop-name" id="shop-name-display">ហាងរបស់ខ្ញុំ</div>
+<!-- APP LAYOUT -->
+<div class="app-layout" id="appLayout" style="display:none;">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h2>💰 Luy AI</h2>
+      <span>Smart Business</span>
+    </div>
+    <nav>
+      <div class="nav-item active" onclick="showPage('dashboard')"><span class="icon">📊</span><span>Dashboard</span></div>
+      <div class="nav-item" onclick="showPage('ai-seller')"><span class="icon">🤖</span><span>AI Seller</span></div>
+      <div class="nav-item" onclick="showPage('products')"><span class="icon">📦</span><span>Products & Stock</span></div>
+      <div class="nav-item" onclick="showPage('orders')"><span class="icon">🛒</span><span>Orders</span></div>
+      <div class="nav-item" onclick="showPage('invoices')"><span class="icon">📄</span><span>Invoices</span></div>
+      <div class="nav-item" onclick="showPage('customers')"><span class="icon">👥</span><span>Customers</span></div>
+      <div class="nav-item" onclick="showPage('profit')"><span class="icon">💰</span><span>Profit</span></div>
+      <div class="nav-item" onclick="showPage('marketing')"><span class="icon">📣</span><span>Marketing</span></div>
+      <div class="nav-item" onclick="showPage('freelancer')"><span class="icon">💼</span><span>Freelancer</span></div>
+      <div class="nav-item admin-only" onclick="showPage('admin')" style="display:none;"><span class="icon">👑</span><span>Admin Panel</span></div>
+      <div class="nav-item" onclick="showPage('reports')"><span class="icon">📈</span><span>Reports</span></div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <strong id="sidebarName">—</strong>
+        <span id="sidebarEmail">—</span>
       </div>
-      <nav style="flex:1;padding:8px 0">
-        <div class="nav-item active" onclick="showPage('dashboard')"><span class="icon">🏠</span>Dashboard</div>
-        <div class="nav-item" onclick="showPage('ai-seller')"><span class="icon">🤖</span>AI Seller</div>
-        <div class="nav-item" onclick="showPage('products')"><span class="icon">📦</span>Products & Stock</div>
-        <div class="nav-item" onclick="showPage('orders')"><span class="icon">🛒</span>Orders</div>
-        <div class="nav-item" onclick="showPage('invoices')"><span class="icon">🧾</span>Invoices</div>
-        <div class="nav-item" onclick="showPage('customers')"><span class="icon">👥</span>Customers</div>
-        <div class="nav-item" onclick="showPage('profit')"><span class="icon">💰</span>Profit</div>
-        <div class="nav-item" onclick="showPage('marketing')"><span class="icon">📣</span>Marketing</div>
-        <div class="nav-item" onclick="showPage('freelancer')"><span class="icon">💻</span>Freelancer</div>
-        <div class="nav-item" id="admin-nav" style="display:none;border-top:1px solid rgba(255,255,255,.1);margin-top:8px" onclick="showPage('admin')"><span class="icon">👑</span>Admin Panel</div>
-        <div class="nav-item" onclick="showPage('reports')"><span class="icon">📈</span>Reports</div>
-      </nav>
-      <div class="sidebar-bottom">
-        <div class="user-info">
-          <div class="user-avatar" id="user-avatar">K</div>
-          <div><div class="user-name" id="user-name-display">Keo</div>
-          <div class="user-email" id="user-email-display">user@email.com</div></div>
-        </div>
-        <button class="btn-logout" onclick="doLogout()">🚪 Logout</button>
+      <button class="btn-logout" onclick="doLogout()">🚪 Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header"><h2>📊 Dashboard</h2></div>
+      <div class="stats-grid" id="dashStats">
+        <div class="stat-card"><div class="icon">📦</div><div class="value" id="statProducts">0</div><div class="label">Products</div></div>
+        <div class="stat-card"><div class="icon">🛒</div><div class="value" id="statOrders">0</div><div class="label">Orders</div></div>
+        <div class="stat-card"><div class="icon">📄</div><div class="value" id="statInvoices">0</div><div class="label">Invoices</div></div>
+        <div class="stat-card"><div class="icon">👥</div><div class="value" id="statCustomers">0</div><div class="label">Customers</div></div>
+        <div class="stat-card"><div class="icon">💵</div><div class="value" id="statSales">$0</div><div class="label">Sales</div></div>
+        <div class="stat-card"><div class="icon">📉</div><div class="value" id="statExpenses">$0</div><div class="label">Expenses</div></div>
+        <div class="stat-card"><div class="icon">💰</div><div class="value" id="statProfit">$0</div><div class="label">Net Profit</div></div>
       </div>
     </div>
 
-    <!-- MAIN -->
-    <div class="main">
-
-      <!-- DASHBOARD -->
-      <div class="page active" id="page-dashboard">
-        <div class="topbar">
-          <div class="page-title">🏠 Dashboard</div>
-          <div class="topbar-actions">
-            <button class="dark-toggle" onclick="toggleDark()" title="Dark Mode">🌙</button>
-          </div>
-        </div>
-        <div id="notif-area"></div>
-        <div class="stats-grid" id="stats-grid"><div class="loading"><div class="spinner"></div>Loading...</div></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-          <div class="card">
-            <div class="card-header"><span class="card-title">📊 Sales Chart (30 days)</span></div>
-            <div class="chart-container"><canvas id="sales-chart"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span class="card-title">🛒 Orders ថ្មីៗ</span></div>
-            <div id="recent-orders"><div class="loading">Loading...</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- AI SELLER -->
-      <div class="page" id="page-ai-seller">
-        <div class="topbar"><div class="page-title">🤖 AI Seller</div></div>
+    <!-- AI SELLER -->
+    <div class="page" id="page-ai-seller">
+      <div class="page-header"><h2>🤖 AI Seller</h2></div>
+      <div class="ai-grid">
         <div class="card">
-          <div class="card-header"><span class="card-title">✨ Generate AI Content</span></div>
-          <div class="form-row">
-            <div class="form-group"><label>ឈ្មោះផលិតផល</label><input class="form-control" id="ai-product" placeholder="ឧ: ស្បែកជើង Nike"></div>
-            <div class="form-group"><label>តម្លៃ</label><input class="form-control" id="ai-price" placeholder="ឧ: 45,000"></div>
+          <div class="ai-btn-grid">
+            <div class="ai-type-btn active" data-type="caption" onclick="setAiType(this,'caption')">📝 Caption</div>
+            <div class="ai-type-btn" data-type="description" onclick="setAiType(this,'description')">📋 Description</div>
+            <div class="ai-type-btn" data-type="reply" onclick="setAiType(this,'reply')">💬 Reply</div>
+            <div class="ai-type-btn" data-type="ads" onclick="setAiType(this,'ads')">📣 Ads</div>
+            <div class="ai-type-btn" data-type="analysis" onclick="setAiType(this,'analysis')">🔍 Analysis</div>
           </div>
-          <div class="form-group"><label>Info បន្ថែម</label><textarea class="form-control" id="ai-extra" rows="2" placeholder="Size, Color, Brand..."></textarea></div>
+          <div class="form-group"><label>Product / Topic</label><input type="text" id="aiProduct" placeholder="e.g. iPhone case, t-shirt..."></div>
+          <div class="form-group"><label>Details / Message</label><textarea id="aiDesc" placeholder="Additional details..."></textarea></div>
           <div class="form-group">
-            <label>រូបផលិតផល</label>
-            <div class="upload-area" onclick="document.getElementById('ai-image').click()">
-              📸 Click Upload រូប
-              <input type="file" id="ai-image" accept="image/*" style="display:none" onchange="previewImg(this,'ai-preview')">
-              <br><img id="ai-preview" class="preview-img" style="display:none">
-            </div>
+            <label>Language</label>
+            <select id="aiLang"><option value="khmer">🇰🇭 ខ្មែរ</option><option value="english">🇬🇧 English</option></select>
           </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary" onclick="generateAI('caption')">✍️ Caption + Reply</button>
-            <button class="btn btn-success" onclick="generateAI('description')">📝 Description</button>
-            <button class="btn btn-warning" onclick="generateAI('ads')">📣 Ads Script</button>
-          </div>
-          <div id="ai-loading" style="display:none" class="loading"><div class="spinner"></div>AI generating...</div>
-          <div id="ai-result" class="ai-result"></div>
-          <button id="ai-copy-btn" style="display:none;margin-top:8px" class="btn btn-outline btn-sm" onclick="copyAI()">📋 Copy</button>
+          <div class="form-group"><label>Image (optional)</label><input type="file" id="aiImage" accept="image/*"></div>
+          <button class="btn btn-primary" style="width:100%" onclick="generateAI()">⚡ Generate</button>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-title">💬 AI Reply អតិថិជន</span></div>
-          <div class="form-group"><label>សំណួរអតិថិជន</label><input class="form-control" id="customer-msg" placeholder="ឧ: តម្លៃប៉ុន្មាន?"></div>
-          <button class="btn btn-primary" onclick="generateReply()">💬 Generate Reply</button>
-          <div id="reply-result" class="ai-result"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <strong>Result</strong>
+            <button class="btn btn-secondary btn-sm" onclick="copyAiResult()">📋 Copy</button>
+          </div>
+          <div class="ai-result" id="aiResult">AI result will appear here...</div>
         </div>
       </div>
+    </div>
 
-      <!-- PRODUCTS -->
-      <div class="page" id="page-products">
-        <div class="topbar">
-          <div class="page-title">📦 Products & Stock</div>
-          <button class="btn btn-primary btn-sm" onclick="openModal('modal-product')">+ Add Product</button>
-        </div>
-        <div class="card">
-          <input class="form-control" placeholder="🔍 Search..." oninput="filterTable(this,'products-table')" style="margin-bottom:14px">
-          <div class="table-wrap">
-            <table id="products-table">
-              <thead><tr><th>រូប</th><th>ឈ្មោះ</th><th>Cost</th><th>Price</th><th>Profit</th><th>Stock</th><th>Action</th></tr></thead>
-              <tbody id="products-body"></tbody>
-            </table>
-          </div>
+    <!-- PRODUCTS -->
+    <div class="page" id="page-products">
+      <div class="page-header">
+        <h2>📦 Products & Stock</h2>
+        <button class="btn btn-primary" onclick="openModal('productModal')">+ Add Product</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Unit</th><th>Action</th></tr></thead>
+            <tbody id="productsList"></tbody>
+          </table>
         </div>
       </div>
+    </div>
 
-      <!-- ORDERS -->
-      <div class="page" id="page-orders">
-        <div class="topbar">
-          <div class="page-title">🛒 Orders</div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-outline btn-sm" onclick="exportCSV()">📤 Export CSV</button>
-            <button class="btn btn-primary btn-sm" onclick="openModal('modal-order')">+ New Order</button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>#</th><th>អតិថិជន</th><th>Total</th><th>Profit</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
-              <tbody id="orders-body"></tbody>
-            </table>
-          </div>
+    <!-- ORDERS -->
+    <div class="page" id="page-orders">
+      <div class="page-header">
+        <h2>🛒 Orders</h2>
+        <button class="btn btn-primary" onclick="openModal('orderModal')">+ New Order</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="ordersList"></tbody>
+          </table>
         </div>
       </div>
+    </div>
 
-      <!-- INVOICES -->
-      <div class="page" id="page-invoices">
-        <div class="topbar">
-          <div class="page-title">🧾 Invoices</div>
-          <button class="btn btn-primary btn-sm" onclick="openModal('modal-invoice')">+ New Invoice</button>
-        </div>
-        <div class="card">
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Invoice#</th><th>អតិថិជន</th><th>Total</th><th>Status</th><th>Due</th><th>Action</th></tr></thead>
-              <tbody id="invoices-body"></tbody>
-            </table>
-          </div>
+    <!-- INVOICES -->
+    <div class="page" id="page-invoices">
+      <div class="page-header">
+        <h2>📄 Invoices</h2>
+        <button class="btn btn-primary" onclick="openModal('invoiceModal')">+ New Invoice</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="inv-table">
+            <colgroup>
+              <col style="width:110px">  <!-- INVOICE# -->
+              <col style="width:140px">  <!-- អតិថិជន -->
+              <col>                       <!-- Items — flex grow -->
+              <col style="width:90px">   <!-- TOTAL -->
+              <col style="width:80px">   <!-- STATUS -->
+              <col style="width:160px">  <!-- DATE/TIME -->
+              <col style="width:150px">  <!-- ACTION -->
+            </colgroup>
+            <thead>
+              <tr>
+                <th>INVOICE#</th>
+                <th>អតិថិជន</th>
+                <th>Items</th>
+                <th>TOTAL</th>
+                <th>STATUS</th>
+                <th>DATE / TIME</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesList"></tbody>
+          </table>
         </div>
       </div>
+    </div>
 
-      <!-- CUSTOMERS -->
-      <div class="page" id="page-customers">
-        <div class="topbar">
-          <div class="page-title">👥 Customers</div>
-          <button class="btn btn-primary btn-sm" onclick="openModal('modal-customer')">+ Add</button>
-        </div>
-        <div class="card">
-          <input class="form-control" placeholder="🔍 Search..." oninput="filterTable(this,'customers-table')" style="margin-bottom:14px">
-          <div class="table-wrap">
-            <table id="customers-table">
-              <thead><tr><th>ឈ្មោះ</th><th>Phone</th><th>Orders</th><th>Total Spent</th><th>Last Order</th><th>Action</th></tr></thead>
-              <tbody id="customers-body"></tbody>
-            </table>
-          </div>
+    <!-- CUSTOMERS -->
+    <div class="page" id="page-customers">
+      <div class="page-header">
+        <h2>👥 Customers</h2>
+        <button class="btn btn-primary" onclick="openModal('customerModal')">+ Add Customer</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>Action</th></tr></thead>
+            <tbody id="customersList"></tbody>
+          </table>
         </div>
       </div>
+    </div>
 
-      <!-- PROFIT -->
-      <div class="page" id="page-profit">
-        <div class="topbar"><div class="page-title">💰 Profit & Expenses</div></div>
-        <div class="stats-grid" id="profit-stats"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-          <div class="card">
-            <div class="card-header"><span class="card-title">💸 Expenses</span><button class="btn btn-danger btn-sm" onclick="openModal('modal-expense')">+ Add</button></div>
-            <div class="table-wrap"><table><thead><tr><th>Category</th><th>Amount</th><th>Note</th><th>Date</th></tr></thead><tbody id="expenses-body"></tbody></table></div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span class="card-title">📊 Profit Chart</span></div>
-            <div class="chart-container"><canvas id="profit-chart"></canvas></div>
-          </div>
+    <!-- PROFIT -->
+    <div class="page" id="page-profit">
+      <div class="page-header">
+        <h2>💰 Profit & Loss</h2>
+        <button class="btn btn-primary" onclick="openModal('expenseModal')">+ Add Expense</button>
+      </div>
+      <div class="profit-grid">
+        <div class="profit-card income"><div class="amount" id="profitIncome">$0</div><div class="label">💵 Total Income</div></div>
+        <div class="profit-card expense"><div class="amount" id="profitExpense">$0</div><div class="label">📉 Total Expenses</div></div>
+        <div class="profit-card profit"><div class="amount" id="profitNet">$0</div><div class="label">💰 Net Profit</div></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:16px">Expenses</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Category</th><th>Amount</th><th>Description</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="expensesList"></tbody>
+          </table>
         </div>
       </div>
+    </div>
 
-      <!-- MARKETING -->
-      <div class="page" id="page-marketing">
-        <div class="topbar"><div class="page-title">📣 Marketing</div></div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">🎨 AI Ads Campaign</span></div>
-          <div class="form-row">
-            <div class="form-group"><label>Campaign Name</label><input class="form-control" id="camp-name" placeholder="ឧ: Sale ១១.១១"></div>
-            <div class="form-group"><label>Budget ($)</label><input class="form-control" id="camp-budget" type="number" placeholder="50"></div>
-          </div>
-          <div class="form-group"><label>Products / Promotion</label><textarea class="form-control" id="camp-products" rows="3" placeholder="ឧ: ស្បែកជើង Nike ចុះ 30%..."></textarea></div>
-          <div class="form-group"><label>Target Audience</label><input class="form-control" id="camp-target" placeholder="ឧ: អ្នកស្រឡាញ់ fashion ខ្មែរ 18-35"></div>
-          <button class="btn btn-primary" onclick="generateCampaign()">🚀 Generate Campaign</button>
-          <div id="camp-loading" style="display:none" class="loading"><div class="spinner"></div>Generating...</div>
-          <div id="camp-result" class="ai-result"></div>
+    <!-- MARKETING -->
+    <div class="page" id="page-marketing">
+      <div class="page-header"><h2>📣 Marketing</h2></div>
+      <div class="card">
+        <p style="color:var(--text-muted);text-align:center;padding:40px">📣 Marketing tools coming soon — Facebook Ads, Campaigns, Analytics</p>
+      </div>
+    </div>
+
+    <!-- FREELANCER -->
+    <div class="page" id="page-freelancer">
+      <div class="page-header"><h2>💼 Freelancer</h2></div>
+      <div class="card">
+        <p style="color:var(--text-muted);text-align:center;padding:40px">💼 Freelancer tools coming soon — Projects, Time Tracking, Client Billing</p>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="page" id="page-admin">
+      <div class="page-header"><h2>👑 Admin Panel</h2></div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Plan</th><th>Joined</th><th>Action</th></tr></thead>
+            <tbody id="adminUsersList"></tbody>
+          </table>
         </div>
       </div>
+    </div>
 
-      <!-- FREELANCER -->
-      <div class="page" id="page-freelancer">
-        <div class="topbar"><div class="page-title">💻 Freelancer</div><button class="btn btn-primary btn-sm" onclick="openModal('modal-project')">+ Project</button></div>
-        <div class="stats-grid" id="freelancer-stats"></div>
-        <div class="card">
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Client</th><th>Project</th><th>Price</th><th>Profit</th><th>Status</th><th>Deadline</th></tr></thead>
-              <tbody id="projects-body"></tbody>
-            </table>
-          </div>
-        </div>
+    <!-- REPORTS -->
+    <div class="page" id="page-reports">
+      <div class="page-header"><h2>📈 Reports</h2></div>
+      <div class="card">
+        <p style="color:var(--text-muted);text-align:center;padding:40px">📈 Reports coming soon — Sales Summary, Monthly P&L, Top Products</p>
       </div>
+    </div>
 
-      <!-- REPORTS -->
-      <div class="page" id="page-reports">
-        <div class="topbar"><div class="page-title">📈 Reports</div></div>
-        <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-          <button class="btn btn-outline btn-sm" onclick="loadReports('today')">📅 Today</button>
-          <button class="btn btn-outline btn-sm" onclick="loadReports('week')">📅 Week</button>
-          <button class="btn btn-outline btn-sm" onclick="loadReports('month')">📅 Month</button>
-          <button class="btn btn-outline btn-sm" onclick="loadReports('all')">📅 All Time</button>
-        </div>
-        <div class="stats-grid" id="report-stats"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-          <div class="card"><div class="card-header"><span class="card-title">📈 Sales Trend</span></div><div class="chart-container"><canvas id="report-chart"></canvas></div></div>
-          <div class="card"><div class="card-header"><span class="card-title">🤖 AI Analysis</span><button class="btn btn-primary btn-sm" onclick="getAIAnalysis()">Analyze</button></div><div id="ai-analysis" class="ai-result"></div></div>
-        </div>
-      </div>
+  </main>
+</div>
 
+<!-- ===================== MODALS ===================== -->
 
-      <!-- ADMIN PANEL -->
-      <div class="page" id="page-admin">
-        <div class="topbar">
-          <div class="page-title">👑 Admin Management</div>
-          <div style="background:#d63031;color:#fff;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700">🔐 ADMIN ONLY</div>
-        </div>
-
-        <!-- System Stats -->
-        <div class="stats-grid" id="admin-stats"></div>
-
-        <!-- Charts Row -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-          <div class="card">
-            <div class="card-header"><span class="card-title">📈 Daily Signups (30 days)</span></div>
-            <div class="chart-container"><canvas id="admin-chart"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span class="card-title">📊 Plan Distribution</span></div>
-            <div class="chart-container"><canvas id="plan-chart"></canvas></div>
-          </div>
-        </div>
-
-        <!-- Users Table -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">👥 All Users (<span id="user-count">0</span>)</span>
-            <input class="form-control" placeholder="🔍 Search users..." oninput="filterTable(this,'admin-users-table')" style="width:200px">
-          </div>
-          <div class="table-wrap">
-            <table id="admin-users-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Shop</th>
-                  <th>Plan</th>
-                  <th>Orders</th>
-                  <th>Sales</th>
-                  <th>Products</th>
-                  <th>Joined</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="admin-users-body"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /main -->
+<!-- PRODUCT MODAL -->
+<div class="modal" id="productModal">
+  <div class="modal-box">
+    <div class="modal-header"><h3>📦 Add Product</h3><button class="modal-close" onclick="closeModal('productModal')">✕</button></div>
+    <div class="form-group"><label>Product Name *</label><input type="text" id="pName" placeholder="e.g. T-Shirt Blue"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Category</label><input type="text" id="pCat" placeholder="e.g. Clothing"></div>
+      <div class="form-group"><label>Unit</label><select id="pUnit"><option>pcs</option><option>kg</option><option>box</option><option>bag</option><option>bottle</option><option>liter</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Price ($)</label><input type="number" id="pPrice" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="form-group"><label>Stock Qty</label><input type="number" id="pStock" placeholder="0" min="0"></div>
+    </div>
+    <div class="form-group"><label>Description</label><textarea id="pDesc" placeholder="Optional..."></textarea></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="saveProduct()">💾 Save Product</button>
   </div>
 </div>
 
-<!-- PRINT INVOICE -->
-<div id="print-invoice"></div>
-
-<!-- ── MODALS ───────────────────────────────────────────────────────── -->
-<!-- Product -->
-<div class="modal-overlay" id="modal-product">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title">📦 Add Product</span><button class="modal-close" onclick="closeModal('modal-product')">✕</button></div>
-    <div class="form-group"><label>ឈ្មោះ *</label><input class="form-control" id="p-name" placeholder="ឈ្មោះ"></div>
-    <div class="form-row">
-      <div class="form-group"><label>Cost (ថ្លៃទិញ)</label><input class="form-control" id="p-buy" type="number" placeholder="0"></div>
-      <div class="form-group"><label>Price (ថ្លៃលក់)</label><input class="form-control" id="p-sell" type="number" placeholder="0"></div>
+<!-- ORDER MODAL -->
+<div class="modal" id="orderModal">
+  <div class="modal-box">
+    <div class="modal-header"><h3>🛒 New Order</h3><button class="modal-close" onclick="closeModal('orderModal')">✕</button></div>
+    <div class="form-group"><label>Customer Name</label><input type="text" id="oCustomer" placeholder="Customer name"></div>
+    <div class="items-section">
+      <label>Order Items</label>
+      <div class="item-header">
+        <span>Item Name</span><span>Qty</span><span>Price ($)</span><span></span>
+      </div>
+      <div id="orderItemsList"></div>
+      <button class="btn-add-item" onclick="addOrderItem()">+ Add Item</button>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label>Stock</label><input class="form-control" id="p-stock" type="number" placeholder="0"></div>
-      <div class="form-group"><label>Category</label><input class="form-control" id="p-cat" placeholder="Category"></div>
+    <div class="total-row">
+      <strong>Total:</strong>
+      <span class="total-val">$<span id="orderTotal">0.00</span></span>
     </div>
-    <div class="form-group"><label>Description</label><textarea class="form-control" id="p-desc" rows="2"></textarea></div>
-    <div class="form-group"><label>រូប</label><input type="file" id="p-image" accept="image/*" class="form-control"></div>
-    <button class="btn btn-primary" onclick="saveProduct()" style="width:100%">💾 Save</button>
+    <div class="form-group"><label>Notes</label><textarea id="oNotes" placeholder="Optional notes..."></textarea></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="saveOrder()">💾 Save Order</button>
   </div>
 </div>
 
-<!-- Order -->
-<div class="modal-overlay" id="modal-order">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title">🛒 New Order</span><button class="modal-close" onclick="closeModal('modal-order')">✕</button></div>
-    <div class="form-row">
-      <div class="form-group"><label>Customer</label><input class="form-control" id="o-customer" placeholder="ឈ្មោះ"></div>
-      <div class="form-group"><label>Note</label><input class="form-control" id="o-note" placeholder="Note"></div>
+<!-- INVOICE MODAL -->
+<div class="modal" id="invoiceModal">
+  <div class="modal-box">
+    <div class="modal-header"><h3>📄 New Invoice</h3><button class="modal-close" onclick="closeModal('invoiceModal')">✕</button></div>
+    <div class="form-group"><label>Customer Name *</label><input type="text" id="invCustomer" placeholder="Customer name"></div>
+    <div class="items-section">
+      <label>Invoice Items</label>
+      <div class="item-header">
+        <span>Item / Service</span><span>Qty</span><span>Price ($)</span><span></span>
+      </div>
+      <div id="invoiceItemsList"></div>
+      <button class="btn-add-item" onclick="addInvoiceItem()">+ Add Item</button>
     </div>
-    <div class="form-group"><label>ជ្រើស Product</label>
-      <select class="form-control" id="o-product-select" onchange="addOrderItem()"><option value="">-- ជ្រើស --</option></select>
+    <div class="total-row">
+      <strong>Total:</strong>
+      <span class="total-val">$<span id="invoiceTotal">0.00</span></span>
     </div>
-    <div id="order-items" style="min-height:40px;background:var(--hover);border-radius:8px;padding:8px;margin:8px 0"></div>
-    <div style="font-weight:800;font-size:15px;text-align:right" id="order-total">Total: $0</div>
-    <button class="btn btn-success" onclick="saveOrder()" style="width:100%;margin-top:12px">✅ Confirm Order</button>
+    <div class="form-group"><label>Due Date</label><input type="date" id="invDueDate"></div>
+    <div class="form-group"><label>Notes</label><textarea id="invNotes" placeholder="Optional notes..."></textarea></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="saveInvoice()">💾 Save Invoice</button>
   </div>
 </div>
 
-<!-- Invoice -->
-<div class="modal-overlay" id="modal-invoice">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title">🧾 New Invoice</span><button class="modal-close" onclick="closeModal('modal-invoice')">✕</button></div>
+<!-- CUSTOMER MODAL -->
+<div class="modal" id="customerModal">
+  <div class="modal-box">
+    <div class="modal-header"><h3>👥 Add Customer</h3><button class="modal-close" onclick="closeModal('customerModal')">✕</button></div>
+    <div class="form-group"><label>Name *</label><input type="text" id="cName" placeholder="Customer name"></div>
     <div class="form-row">
-      <div class="form-group"><label>Customer Name *</label><input class="form-control" id="inv-name" placeholder="ឈ្មោះ"></div>
-      <div class="form-group"><label>Phone</label><input class="form-control" id="inv-phone" placeholder="Phone"></div>
+      <div class="form-group"><label>Phone</label><input type="text" id="cPhone" placeholder="+855..."></div>
+      <div class="form-group"><label>Email</label><input type="email" id="cEmail" placeholder="email@..."></div>
     </div>
-    <div class="form-group"><label>Items (Name,Qty,Price — one per line)</label>
-      <textarea class="form-control" id="inv-items-text" rows="5" placeholder="ស្បែកជើង Nike,2,45&#10;Bag Louis,1,25"></textarea>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Discount ($)</label><input class="form-control" id="inv-discount" type="number" value="0"></div>
-      <div class="form-group"><label>Due Date</label><input class="form-control" id="inv-due" type="date"></div>
-    </div>
-    <button class="btn btn-primary" onclick="saveInvoice()" style="width:100%">🧾 Create</button>
+    <div class="form-group"><label>Address</label><input type="text" id="cAddress" placeholder="Address"></div>
+    <div class="form-group"><label>Notes</label><textarea id="cNotes" placeholder="Optional..."></textarea></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="saveCustomer()">💾 Save Customer</button>
   </div>
 </div>
 
-<!-- Customer -->
-<div class="modal-overlay" id="modal-customer">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title">👤 Add Customer</span><button class="modal-close" onclick="closeModal('modal-customer')">✕</button></div>
-    <div class="form-group"><label>ឈ្មោះ *</label><input class="form-control" id="c-name" placeholder="ឈ្មោះ"></div>
-    <div class="form-group"><label>Phone</label><input class="form-control" id="c-phone" placeholder="Phone"></div>
-    <div class="form-group"><label>Address</label><input class="form-control" id="c-address" placeholder="Address"></div>
-    <div class="form-group"><label>Note</label><textarea class="form-control" id="c-note" rows="2"></textarea></div>
-    <button class="btn btn-primary" onclick="saveCustomer()" style="width:100%">💾 Save</button>
-  </div>
-</div>
-
-<!-- Expense -->
-<div class="modal-overlay" id="modal-expense">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title">💸 Add Expense</span><button class="modal-close" onclick="closeModal('modal-expense')">✕</button></div>
-    <div class="form-group"><label>Category</label>
-      <select class="form-control" id="exp-cat">
-        <option>ថ្លៃជួល</option><option>អគ្គីសនី/ទឹក</option><option>ដឹកជញ្ជូន</option>
-        <option>Stock/ទំនិញ</option><option>Marketing</option><option>ប្រាក់ខែ</option><option>ផ្សេងៗ</option>
+<!-- EXPENSE MODAL -->
+<div class="modal" id="expenseModal">
+  <div class="modal-box">
+    <div class="modal-header"><h3>📉 Add Expense</h3><button class="modal-close" onclick="closeModal('expenseModal')">✕</button></div>
+    <div class="form-group">
+      <label>Category</label>
+      <select id="expCat">
+        <option>Rent</option><option>Utilities</option><option>Salaries</option>
+        <option>Marketing</option><option>Supplies</option><option>Transport</option><option>Other</option>
       </select>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label>Amount ($) *</label><input class="form-control" id="exp-amount" type="number" placeholder="0"></div>
-      <div class="form-group"><label>Date</label><input class="form-control" id="exp-date" type="date"></div>
-    </div>
-    <div class="form-group"><label>Note</label><input class="form-control" id="exp-note" placeholder="Note"></div>
-    <button class="btn btn-danger" onclick="saveExpense()" style="width:100%">💾 Save</button>
+    <div class="form-group"><label>Amount ($)</label><input type="number" id="expAmount" placeholder="0.00" step="0.01" min="0"></div>
+    <div class="form-group"><label>Description</label><input type="text" id="expDesc" placeholder="Details..."></div>
+    <div class="form-group"><label>Date</label><input type="date" id="expDate"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="saveExpense()">💾 Save Expense</button>
   </div>
 </div>
 
-<!-- Project -->
-<div class="modal-overlay" id="modal-project">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title">💻 New Project</span><button class="modal-close" onclick="closeModal('modal-project')">✕</button></div>
-    <div class="form-row">
-      <div class="form-group"><label>Client *</label><input class="form-control" id="proj-client" placeholder="Client"></div>
-      <div class="form-group"><label>Phone</label><input class="form-control" id="proj-phone" placeholder="Phone"></div>
-    </div>
-    <div class="form-group"><label>Project Title *</label><input class="form-control" id="proj-title" placeholder="Title"></div>
-    <div class="form-group"><label>Description</label><textarea class="form-control" id="proj-desc" rows="2"></textarea></div>
-    <div class="form-row">
-      <div class="form-group"><label>Price ($)</label><input class="form-control" id="proj-price" type="number" placeholder="0"></div>
-      <div class="form-group"><label>Cost ($)</label><input class="form-control" id="proj-cost" type="number" placeholder="0"></div>
-    </div>
-    <div class="form-group"><label>Deadline</label><input class="form-control" id="proj-deadline" type="date"></div>
-    <button class="btn btn-primary" onclick="saveProject()" style="width:100%">💾 Save</button>
-  </div>
-</div>
-
+<!-- ===================== JAVASCRIPT ===================== -->
 <script>
-const API=''; let TOKEN=localStorage.getItem('luy_token')||'';
-let currentReport={period:'month'}, orderItems=[], allProducts=[], salesChartInst=null, profitChartInst=null, reportChartInst=null;
+const API = '';
+let token = localStorage.getItem('token');
+let currentUser = null;
+let currentAiType = 'caption';
 
-// ── AUTH ────────────────────────────────────────────────────────────
-function switchTab(tab){
-  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
-  document.getElementById('login-form').style.display=tab==='login'?'block':'none';
-  document.getElementById('register-form').style.display=tab==='register'?'block':'none';
-  document.getElementById('auth-error').style.display='none';
+// ==================== AUTH ====================
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginErr');
+  err.textContent = '';
+  try {
+    const r = await apiFetch('/api/login', 'POST', { email, password }, false);
+    if (r.error) return err.textContent = r.error;
+    localStorage.setItem('token', r.token);
+    token = r.token;
+    currentUser = r.user;
+    initApp();
+  } catch(e) { err.textContent = 'Login failed'; }
 }
 
-async function doLogin(){
-  const email=document.getElementById('l-email').value, pass=document.getElementById('l-pass').value;
-  const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})}).then(r=>r.json());
-  if(r.error){showAuthError(r.error);return;}
-  TOKEN=r.token; localStorage.setItem('luy_token',TOKEN); initApp(r.user);
+async function doRegister() {
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const password = document.getElementById('regPass').value;
+  const err = document.getElementById('regErr');
+  err.textContent = '';
+  try {
+    const r = await apiFetch('/api/register', 'POST', { name, email, password }, false);
+    if (r.error) return err.textContent = r.error;
+    localStorage.setItem('token', r.token);
+    token = r.token;
+    currentUser = r.user;
+    initApp();
+  } catch(e) { err.textContent = 'Register failed'; }
 }
 
-async function doRegister(){
-  const name=document.getElementById('r-name').value, shop=document.getElementById('r-shop').value;
-  const email=document.getElementById('r-email').value, pass=document.getElementById('r-pass').value;
-  if(!name||!email||!pass){showAuthError('Fill all fields!');return;}
-  const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password:pass,shop_name:shop})}).then(r=>r.json());
-  if(r.error){showAuthError(r.error);return;}
-  TOKEN=r.token; localStorage.setItem('luy_token',TOKEN); initApp(r.user);
+function doLogout() {
+  localStorage.removeItem('token');
+  token = null;
+  currentUser = null;
+  document.getElementById('authPage').style.display = 'flex';
+  document.getElementById('appLayout').style.display = 'none';
 }
 
-function showAuthError(msg){const e=document.getElementById('auth-error');e.textContent='❌ '+msg;e.style.display='block';}
+function switchAuth(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+  document.querySelector(`[onclick="switchAuth('${tab}')"]`).classList.add('active');
+  document.getElementById(tab === 'login' ? 'loginForm' : 'registerForm').classList.add('active');
+}
 
-function doLogout(){localStorage.removeItem('luy_token');TOKEN='';document.getElementById('app-page').style.display='none';document.getElementById('auth-page').style.display='flex';}
+// ==================== API ====================
+async function apiFetch(url, method = 'GET', body = null, auth = true) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (auth && token) headers['Authorization'] = 'Bearer ' + token;
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + url, opts);
+  return r.json();
+}
 
-function initApp(user){
-  document.getElementById('auth-page').style.display='none';
-  document.getElementById('app-page').style.display='block';
-  document.getElementById('user-name-display').textContent=user.name||'User';
-  document.getElementById('user-email-display').textContent=user.email||'';
-  document.getElementById('shop-name-display').textContent=user.shop_name||'ហាងរបស់ខ្ញុំ';
-  document.getElementById('user-avatar').textContent=(user.name||'U')[0].toUpperCase();
+// ==================== INIT ====================
+async function initApp() {
+  document.getElementById('authPage').style.display = 'none';
+  document.getElementById('appLayout').style.display = 'flex';
+
+  const me = await apiFetch('/api/me');
+  currentUser = me;
+  document.getElementById('sidebarName').textContent = me.name;
+  document.getElementById('sidebarEmail').textContent = me.email;
+
+  if (me.role === 'admin') {
+    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+  }
+
   loadDashboard();
-  checkAdmin();
 }
 
-function headers(){return{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'};}
-function hdr(){return{Authorization:'Bearer '+TOKEN};}
-
-// Check existing token
-if(TOKEN){fetch('/api/auth/me',{headers:hdr()}).then(r=>r.json()).then(u=>{if(u.id)initApp(u);else doLogout();}).catch(doLogout);}
-
-// ── NAV ─────────────────────────────────────────────────────────────
-function showPage(name){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.getAttribute('onclick')?.includes("'"+name+"'")));
-  const loaders={dashboard:loadDashboard,products:loadProducts,orders:loadOrders,invoices:loadInvoices,customers:loadCustomers,profit:loadProfit,freelancer:loadProjects,reports:()=>loadReports('month'),admin:loadAdmin};
-  if(loaders[name]) loaders[name]();
-  document.getElementById('sidebar').classList.remove('open');
-}
-
-function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
-
-// ── DARK MODE ────────────────────────────────────────────────────────
-function toggleDark(){
-  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
-  document.documentElement.setAttribute('data-theme',isDark?'light':'dark');
-  localStorage.setItem('luy_theme',isDark?'light':'dark');
-}
-const savedTheme=localStorage.getItem('luy_theme');
-if(savedTheme) document.documentElement.setAttribute('data-theme',savedTheme);
-
-// ── MODALS ───────────────────────────────────────────────────────────
-function openModal(id){document.getElementById(id).classList.add('show');}
-function closeModal(id){document.getElementById(id).classList.remove('show');}
-document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');}));
-
-// ── FORMAT ───────────────────────────────────────────────────────────
-const fmt=n=>'$'+(+n||0).toFixed(2);
-const fmtDate=s=>s?String(s).slice(0,10):'-';
-
-// ── CHARTS ───────────────────────────────────────────────────────────
-function drawChart(canvasId, labels, data, label, color, existingInst){
-  const ctx=document.getElementById(canvasId)?.getContext('2d');
-  if(!ctx) return null;
-  if(existingInst) existingInst.destroy();
-  return new Chart(ctx,{type:'line',data:{labels,datasets:[{label,data,borderColor:color,backgroundColor:color+'22',fill:true,tension:.4,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}}});
-}
-
-// ── DASHBOARD ────────────────────────────────────────────────────────
-async function loadDashboard(){
-  const d=await fetch('/api/dashboard',{headers:hdr()}).then(r=>r.json());
-  // Notifications
-  let notifs='';
-  if(d.lowStock>0) notifs+=`<div class="notif-bar danger">⚠️ <strong>${d.lowStock} products</strong> Stock ជិតអស់! ចូល Products → Fill stock.</div>`;
-  if(d.unpaidInv>0) notifs+=`<div class="notif-bar">🧾 <strong>${d.unpaidInv} Invoices</strong> មិនទាន់ paid!</div>`;
-  document.getElementById('notif-area').innerHTML=notifs;
-
-  document.getElementById('stats-grid').innerHTML=`
-    <div class="stat-card" style="--accent:#6c5ce7"><span class="stat-ico">💰</span><div class="stat-val">${fmt(d.todaySales)}</div><div class="stat-lbl">ថ្ងៃនេះ Sales</div></div>
-    <div class="stat-card" style="--accent:#00b894"><span class="stat-ico">📈</span><div class="stat-val">${fmt(d.monthSales)}</div><div class="stat-lbl">ខែនេះ Sales</div></div>
-    <div class="stat-card" style="--accent:#00cec9"><span class="stat-ico">🛒</span><div class="stat-val">${d.totalOrders}</div><div class="stat-lbl">Orders សរុប</div></div>
-    <div class="stat-card" style="--accent:#fdcb6e"><span class="stat-ico">👥</span><div class="stat-val">${d.totalCustomers}</div><div class="stat-lbl">Customers</div></div>
-    <div class="stat-card" style="--accent:#e17055"><span class="stat-ico">📦</span><div class="stat-val">${d.totalProducts}</div><div class="stat-lbl">Products</div></div>
-    <div class="stat-card" style="--accent:#55efc4"><span class="stat-ico">💎</span><div class="stat-val">${fmt(d.totalProfit)}</div><div class="stat-lbl">Total Profit</div></div>
-  `;
-  // Chart
-  if(d.dailyProfit?.length>0){
-    const labels=d.dailyProfit.map(x=>x.date?.toString().slice(5,10));
-    const vals=d.dailyProfit.map(x=>+x.sales||0);
-    salesChartInst=drawChart('sales-chart',labels,vals,'Sales','#6c5ce7',salesChartInst);
+window.onload = async () => {
+  if (token) {
+    try {
+      const me = await apiFetch('/api/me');
+      if (me.id) { currentUser = me; initApp(); return; }
+    } catch(e) {}
   }
-  const ro=d.recentOrders?.map(o=>`<tr><td>${o.customer_name}</td><td>${fmt(o.total)}</td><td><span class="badge badge-${o.status==='completed'?'success':o.status==='pending'?'warning':'danger'}">${o.status}</span></td></tr>`).join('');
-  document.getElementById('recent-orders').innerHTML=`<table><thead><tr><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>${ro||'<tr><td colspan=3 style="text-align:center;color:var(--sub)">No orders yet</td></tr>'}</tbody></table>`;
+  document.getElementById('authPage').style.display = 'flex';
+};
+
+// ==================== NAVIGATION ====================
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+
+  const loaders = {
+    dashboard: loadDashboard,
+    products: loadProducts,
+    orders: loadOrders,
+    invoices: loadInvoices,
+    customers: loadCustomers,
+    profit: loadProfit,
+    admin: loadAdminUsers,
+  };
+  if (loaders[name]) loaders[name]();
 }
 
-// ── AI ───────────────────────────────────────────────────────────────
-function previewImg(input,id){const f=input.files[0];if(f){const r=new FileReader();r.onload=e=>{const img=document.getElementById(id);img.src=e.target.result;img.style.display='block';};r.readAsDataURL(f);}}
+// ==================== MODAL ====================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  if (id === 'invoiceModal') initInvoiceItems();
+  if (id === 'orderModal') initOrderItems();
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal')) closeModal(e.target.id);
+});
 
-async function generateAI(type){
-  const fd=new FormData();
-  fd.append('type',type); fd.append('product_name',document.getElementById('ai-product').value);
-  fd.append('price',document.getElementById('ai-price').value); fd.append('extra',document.getElementById('ai-extra').value);
-  const img=document.getElementById('ai-image').files[0]; if(img) fd.append('image',img);
-  document.getElementById('ai-loading').style.display='block'; document.getElementById('ai-result').style.display='none';
-  const r=await fetch('/api/ai/generate',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd}).then(r=>r.json());
-  document.getElementById('ai-result').textContent=r.result||r.error; document.getElementById('ai-result').style.display='block';
-  document.getElementById('ai-copy-btn').style.display='inline-flex';
-  document.getElementById('ai-loading').style.display='none';
+// ==================== DASHBOARD ====================
+async function loadDashboard() {
+  const d = await apiFetch('/api/dashboard');
+  if (!d) return;
+  document.getElementById('statProducts').textContent = d.products || 0;
+  document.getElementById('statOrders').textContent = d.orders || 0;
+  document.getElementById('statInvoices').textContent = d.invoices || 0;
+  document.getElementById('statCustomers').textContent = d.customers || 0;
+  document.getElementById('statSales').textContent = '$' + (d.sales_total || 0).toFixed(2);
+  document.getElementById('statExpenses').textContent = '$' + (d.expenses_total || 0).toFixed(2);
+  document.getElementById('statProfit').textContent = '$' + (d.profit || 0).toFixed(2);
 }
 
-async function generateReply(){
-  const msg=document.getElementById('customer-msg').value; if(!msg) return;
-  const fd=new FormData(); fd.append('type','reply'); fd.append('extra',msg);
-  fd.append('product_name',document.getElementById('ai-product').value||'');
-  const r=await fetch('/api/ai/generate',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd}).then(r=>r.json());
-  const el=document.getElementById('reply-result'); el.textContent=r.result||r.error; el.style.display='block';
+// ==================== PRODUCTS ====================
+async function loadProducts() {
+  const data = await apiFetch('/api/products');
+  const tb = document.getElementById('productsList');
+  if (!data || !data.length) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:30px">No products yet</td></tr>'; return; }
+  tb.innerHTML = data.map(p => `
+    <tr>
+      <td><strong>${p.name}</strong></td>
+      <td>${p.category || '—'}</td>
+      <td>$${parseFloat(p.price).toFixed(2)}</td>
+      <td><span class="badge ${p.stock > 10 ? 'badge-success' : p.stock > 0 ? 'badge-warning' : 'badge-danger'}">${p.stock}</span></td>
+      <td>${p.unit}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">🗑️</button></td>
+    </tr>
+  `).join('');
 }
 
-function copyAI(){navigator.clipboard.writeText(document.getElementById('ai-result').textContent).then(()=>alert('✅ Copied!'));}
-
-// ── PRODUCTS ─────────────────────────────────────────────────────────
-async function loadProducts(){
-  allProducts=await fetch('/api/products',{headers:hdr()}).then(r=>r.json());
-  const rows=allProducts.map(p=>`<tr>
-    <td>${p.image?`<img src="${p.image}" style="width:38px;height:38px;object-fit:cover;border-radius:6px">`:'📦'}</td>
-    <td><strong>${p.name}</strong><br><small style="color:var(--sub)">${p.category||''}</small></td>
-    <td>${fmt(p.buy_price)}</td><td>${fmt(p.sell_price)}</td>
-    <td class="profit-pos">${fmt(p.sell_price-p.buy_price)}</td>
-    <td><span style="color:${p.stock<=5?'var(--danger)':'var(--success)'};font-weight:700">${p.stock}</span></td>
-    <td><button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">🗑</button></td>
-  </tr>`).join('');
-  document.getElementById('products-body').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;color:var(--sub);padding:30px">No products yet</td></tr>';
-  const sel=document.getElementById('o-product-select');
-  sel.innerHTML='<option value="">-- ជ្រើស --</option>'+allProducts.map(p=>`<option value="${p.id}" data-price="${p.sell_price}" data-buy="${p.buy_price}" data-name="${p.name}" data-stock="${p.stock}">${p.name} (${fmt(p.sell_price)}) [${p.stock}]</option>`).join('');
+async function saveProduct() {
+  const d = {
+    name: document.getElementById('pName').value,
+    category: document.getElementById('pCat').value,
+    price: document.getElementById('pPrice').value,
+    stock: document.getElementById('pStock').value,
+    unit: document.getElementById('pUnit').value,
+    description: document.getElementById('pDesc').value,
+  };
+  if (!d.name) return alert('Product name required');
+  await apiFetch('/api/products', 'POST', d);
+  closeModal('productModal');
+  loadProducts();
+  loadDashboard();
 }
 
-async function saveProduct(){
-  const fd=new FormData();
-  ['name','description','category'].forEach(k=>fd.append(k,document.getElementById(`p-${k[0]===n?'name':k.substring(0,1)}`+'').value||''));
-  fd.append('name',document.getElementById('p-name').value);
-  fd.append('description',document.getElementById('p-desc').value);
-  fd.append('buy_price',document.getElementById('p-buy').value);
-  fd.append('sell_price',document.getElementById('p-sell').value);
-  fd.append('stock',document.getElementById('p-stock').value);
-  fd.append('category',document.getElementById('p-cat').value);
-  const img=document.getElementById('p-image').files[0]; if(img) fd.append('image',img);
-  await fetch('/api/products',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd});
-  closeModal('modal-product'); loadProducts();
+async function deleteProduct(id) {
+  if (!confirm('Delete product?')) return;
+  await apiFetch('/api/products/' + id, 'DELETE');
+  loadProducts();
+  loadDashboard();
 }
 
-async function deleteProduct(id){if(confirm('Delete?')){await fetch('/api/products/'+id,{method:'DELETE',headers:hdr()});loadProducts();}}
+// ==================== ORDERS ====================
+let orderItems = [];
 
-// ── ORDERS ───────────────────────────────────────────────────────────
-function addOrderItem(){
-  const sel=document.getElementById('o-product-select'), opt=sel.selectedOptions[0]; if(!opt.value) return;
-  const ex=orderItems.find(i=>i.id===opt.value);
-  if(ex) ex.qty++; else orderItems.push({id:opt.value,name:opt.dataset.name,price:+opt.dataset.price,buy_price:+opt.dataset.buy,qty:1});
-  renderOrderItems(); sel.value='';
+function initOrderItems() {
+  orderItems = [];
+  document.getElementById('orderItemsList').innerHTML = '';
+  document.getElementById('orderTotal').textContent = '0.00';
+  addOrderItem();
 }
 
-function renderOrderItems(){
-  const total=orderItems.reduce((s,i)=>s+i.price*i.qty,0);
-  document.getElementById('order-items').innerHTML=orderItems.map((item,idx)=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--card);border-radius:6px;margin-bottom:4px">
-      <span>${item.name}</span>
-      <div style="display:flex;align-items:center;gap:8px">
-        <button onclick="changeQty(${idx},-1)" style="width:24px;height:24px;border:1px solid var(--border);background:var(--hover);border-radius:4px;cursor:pointer">-</button>
-        <b>${item.qty}</b>
-        <button onclick="changeQty(${idx},1)" style="width:24px;height:24px;border:1px solid var(--border);background:var(--hover);border-radius:4px;cursor:pointer">+</button>
-        <span>${fmt(item.price*item.qty)}</span>
-        <button onclick="removeItem(${idx})" style="color:var(--danger);background:none;border:none;cursor:pointer;font-size:16px">✕</button>
-      </div>
-    </div>`).join('');
-  document.getElementById('order-total').textContent='Total: '+fmt(total);
-}
-
-function changeQty(idx,d){orderItems[idx].qty=Math.max(1,orderItems[idx].qty+d);renderOrderItems();}
-function removeItem(idx){orderItems.splice(idx,1);renderOrderItems();}
-
-async function saveOrder(){
-  if(!orderItems.length){alert('Add products!');return;}
-  const r=await fetch('/api/orders',{method:'POST',headers:headers(),body:JSON.stringify({customer_name:document.getElementById('o-customer').value||'Walk-in',items:JSON.stringify(orderItems),note:document.getElementById('o-note').value})}).then(r=>r.json());
-  alert(`✅ Order saved!\nTotal: ${fmt(r.total)}\nProfit: ${fmt(r.profit)}`);
-  orderItems=[]; renderOrderItems(); closeModal('modal-order'); loadOrders();
-}
-
-async function loadOrders(){
-  const data=await fetch('/api/orders',{headers:hdr()}).then(r=>r.json());
-  const rows=data.map((o,i)=>`<tr>
-    <td>${i+1}</td><td>${o.customer_name}</td><td>${fmt(o.total)}</td>
-    <td class="${+o.profit>=0?'profit-pos':'profit-neg'}">${fmt(o.profit)}</td>
-    <td><select onchange="updateOrderStatus('${o.id}',this.value)" style="border:1px solid var(--border);border-radius:4px;padding:3px;background:var(--input-bg);color:var(--text)">
-      ${['pending','processing','completed','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}
-    </select></td>
-    <td>${fmtDate(o.created_at)}</td>
-    <td><button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')">🗑</button></td>
-  </tr>`).join('');
-  document.getElementById('orders-body').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;color:var(--sub);padding:30px">No orders yet</td></tr>';
-}
-
-async function updateOrderStatus(id,status){await fetch('/api/orders/'+id+'/status',{method:'PUT',headers:headers(),body:JSON.stringify({status})});}
-async function deleteOrder(id){if(confirm('Delete?')){await fetch('/api/orders/'+id,{method:'DELETE',headers:hdr()});loadOrders();}}
-
-function exportCSV(){window.open('/api/export/orders?token='+TOKEN);}
-
-// ── INVOICES ─────────────────────────────────────────────────────────
-async function saveInvoice(){
-  const lines=document.getElementById('inv-items-text').value.split('\n').filter(l=>l.trim());
-  const items=lines.map(l=>{const p=l.split(',');return{name:p[0]?.trim(),qty:+p[1]||1,price:+p[2]||0};});
-  const r=await fetch('/api/invoices',{method:'POST',headers:headers(),body:JSON.stringify({customer_name:document.getElementById('inv-name').value,customer_phone:document.getElementById('inv-phone').value,items:JSON.stringify(items),discount:document.getElementById('inv-discount').value,due_date:document.getElementById('inv-due').value})}).then(r=>r.json());
-  alert(`✅ Invoice ${r.invoice_no}\nTotal: ${fmt(r.total)}`);
-  closeModal('modal-invoice'); loadInvoices();
-}
-
-async function loadInvoices(){
-  const data=await fetch('/api/invoices',{headers:hdr()}).then(r=>r.json());
-  const rows=data.map(inv=>`<tr>
-    <td><strong>${inv.invoice_no}</strong></td><td>${inv.customer_name}</td><td>${fmt(inv.total)}</td>
-    <td><span class="badge badge-${inv.status==='paid'?'success':'danger'}">${inv.status}</span></td>
-    <td>${fmtDate(inv.due_date)||'-'}</td>
-    <td style="display:flex;gap:6px">
-      ${inv.status!=='paid'?`<button class="btn btn-success btn-sm" onclick="markPaid('${inv.id}')">✅ Paid</button>`:''}
-      <button class="btn btn-outline btn-sm" onclick="printInvoice('${inv.id}')">🖨️</button>
-    </td>
-  </tr>`).join('');
-  document.getElementById('invoices-body').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;color:var(--sub);padding:30px">No invoices</td></tr>';
-}
-
-async function markPaid(id){await fetch('/api/invoices/'+id+'/pay',{method:'PUT',headers:hdr()});loadInvoices();}
-
-async function printInvoice(id){
-  const invs=await fetch('/api/invoices',{headers:hdr()}).then(r=>r.json());
-  const inv=invs.find(i=>i.id===id); if(!inv) return;
-  const items=JSON.parse(inv.items||'[]');
-  const rows=items.map(i=>`<tr><td>${i.name}</td><td style="text-align:center">${i.qty}</td><td style="text-align:right">$${i.price}</td><td style="text-align:right">$${(i.price*i.qty).toFixed(2)}</td></tr>`).join('');
-  const shopName=document.getElementById('shop-name-display').textContent;
-  document.getElementById('print-invoice').innerHTML=`
-    <div style="max-width:600px;margin:0 auto;font-family:sans-serif">
-      <div style="text-align:center;border-bottom:2px solid #333;padding-bottom:16px;margin-bottom:16px">
-        <h1 style="font-size:28px;margin:0">💰 ${shopName}</h1>
-        <p style="color:#666;margin:4px 0">INVOICE</p>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:20px">
-        <div><strong>Invoice#:</strong> ${inv.invoice_no}<br><strong>Date:</strong> ${fmtDate(inv.created_at)}<br><strong>Due:</strong> ${fmtDate(inv.due_date)||'N/A'}</div>
-        <div style="text-align:right"><strong>Bill To:</strong><br>${inv.customer_name}<br>${inv.customer_phone||''}</div>
-      </div>
-      <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
-        <thead><tr style="background:#f0f0f0"><th style="padding:8px;text-align:left">Item</th><th style="padding:8px;text-align:center">Qty</th><th style="padding:8px;text-align:right">Price</th><th style="padding:8px;text-align:right">Total</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-      <div style="text-align:right;border-top:2px solid #333;padding-top:12px">
-        <div>Subtotal: ${fmt(inv.subtotal)}</div>
-        ${+inv.discount>0?`<div>Discount: -${fmt(inv.discount)}</div>`:''}
-        <div style="font-size:20px;font-weight:800;margin-top:8px">TOTAL: ${fmt(inv.total)}</div>
-        <div style="color:${inv.status==='paid'?'green':'red'};font-weight:700;margin-top:4px">${inv.status==='paid'?'✅ PAID':'⚠️ UNPAID'}</div>
-      </div>
-      <div style="text-align:center;margin-top:30px;color:#999;font-size:12px">Thank you for your business! 🙏</div>
-    </div>`;
-  window.print();
-}
-
-// ── CUSTOMERS ────────────────────────────────────────────────────────
-async function saveCustomer(){
-  await fetch('/api/customers',{method:'POST',headers:headers(),body:JSON.stringify({name:document.getElementById('c-name').value,phone:document.getElementById('c-phone').value,address:document.getElementById('c-address').value,note:document.getElementById('c-note').value})});
-  closeModal('modal-customer'); loadCustomers();
-}
-
-async function loadCustomers(){
-  const data=await fetch('/api/customers',{headers:hdr()}).then(r=>r.json());
-  const rows=data.map(c=>`<tr>
-    <td><strong>${c.name}</strong></td><td>${c.phone||'-'}</td>
-    <td>${c.total_orders}</td><td>${fmt(c.total_spent)}</td>
-    <td>${fmtDate(c.last_order)||'Never'}</td>
-    <td><button class="btn btn-primary btn-sm" onclick="sendFollowup('${c.name}','${c.last_order||''}')">💬</button></td>
-  </tr>`).join('');
-  document.getElementById('customers-body').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;color:var(--sub);padding:30px">No customers yet</td></tr>';
-}
-
-async function sendFollowup(name,last){
-  const r=await fetch('/api/customers/followup-message',{method:'POST',headers:headers(),body:JSON.stringify({customer_name:name,last_order:last})}).then(r=>r.json());
-  alert('💬 Follow-up Message:\n\n'+r.message);
-}
-
-// ── PROFIT ───────────────────────────────────────────────────────────
-async function loadProfit(){
-  const [data,expenses]=await Promise.all([fetch('/api/reports?period=month',{headers:hdr()}).then(r=>r.json()),fetch('/api/expenses',{headers:hdr()}).then(r=>r.json())]);
-  document.getElementById('profit-stats').innerHTML=`
-    <div class="stat-card" style="--accent:#00b894"><span class="stat-ico">💰</span><div class="stat-val">${fmt(data.sales)}</div><div class="stat-lbl">Sales</div></div>
-    <div class="stat-card" style="--accent:#6c5ce7"><span class="stat-ico">📈</span><div class="stat-val">${fmt(data.profit)}</div><div class="stat-lbl">Gross Profit</div></div>
-    <div class="stat-card" style="--accent:#d63031"><span class="stat-ico">💸</span><div class="stat-val">${fmt(data.expenses)}</div><div class="stat-lbl">Expenses</div></div>
-    <div class="stat-card" style="--accent:#00cec9"><span class="stat-ico">💎</span><div class="stat-val">${fmt(data.netProfit)}</div><div class="stat-lbl">Net Profit</div></div>
+function addOrderItem() {
+  const row = document.createElement('div');
+  row.className = 'item-row';
+  const idx = orderItems.length;
+  orderItems.push({ name: '', qty: 1, price: 0 });
+  row.innerHTML = `
+    <input type="text" placeholder="Item name" oninput="orderItems[${idx}].name=this.value">
+    <input type="number" value="1" min="1" oninput="orderItems[${idx}].qty=+this.value;calcOrderTotal()">
+    <input type="number" placeholder="0.00" step="0.01" oninput="orderItems[${idx}].price=+this.value;calcOrderTotal()">
+    <button class="item-remove" onclick="this.parentElement.remove();calcOrderTotal()">✕</button>
   `;
-  const rows=expenses.slice(0,20).map(e=>`<tr><td>${e.category}</td><td class="profit-neg">${fmt(e.amount)}</td><td>${e.note||'-'}</td><td>${fmtDate(e.date)}</td></tr>`).join('');
-  document.getElementById('expenses-body').innerHTML=rows||'<tr><td colspan="4" style="text-align:center;color:var(--sub)">No expenses</td></tr>';
-  if(data.dailySales?.length>0){
-    const labels=data.dailySales.map(x=>x.date?.toString().slice(5,10));
-    const vals=data.dailySales.map(x=>+x.profit||0);
-    profitChartInst=drawChart('profit-chart',labels,vals,'Profit','#00b894',profitChartInst);
+  document.getElementById('orderItemsList').appendChild(row);
+}
+
+function calcOrderTotal() {
+  let total = 0;
+  document.querySelectorAll('#orderItemsList .item-row').forEach(row => {
+    const qty = parseFloat(row.querySelectorAll('input')[1].value) || 0;
+    const price = parseFloat(row.querySelectorAll('input')[2].value) || 0;
+    total += qty * price;
+  });
+  document.getElementById('orderTotal').textContent = total.toFixed(2);
+}
+
+async function loadOrders() {
+  const data = await apiFetch('/api/orders');
+  const tb = document.getElementById('ordersList');
+  if (!data || !data.length) { tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:30px">No orders yet</td></tr>'; return; }
+  tb.innerHTML = data.map(o => {
+    const items = Array.isArray(o.items) ? o.items : [];
+    const itemStr = items.length ? items.map(i => `${i.name} x${i.qty}`).join(', ') : '—';
+    return `
+      <tr>
+        <td>#${o.id}</td>
+        <td>${o.customer_name || '—'}</td>
+        <td class="items-list"><small>${itemStr}</small></td>
+        <td>$${parseFloat(o.total).toFixed(2)}</td>
+        <td><span class="badge ${o.status==='completed'?'badge-success':o.status==='cancelled'?'badge-danger':'badge-warning'}">${o.status}</span></td>
+        <td>${o.created_at ? o.created_at.split('T')[0] : '—'}</td>
+        <td>
+          ${o.status==='pending'?`<button class="btn btn-success btn-sm" onclick="updateOrderStatus(${o.id},'completed')">✅</button>`:''}
+          <button class="btn btn-danger btn-sm" onclick="deleteOrder(${o.id})">🗑️</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function saveOrder() {
+  const items = [];
+  document.querySelectorAll('#orderItemsList .item-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const name = inputs[0].value;
+    const qty = parseFloat(inputs[1].value) || 1;
+    const price = parseFloat(inputs[2].value) || 0;
+    if (name) items.push({ name, qty, price });
+  });
+  const total = items.reduce((s, i) => s + i.qty * i.price, 0);
+  const d = {
+    customer_name: document.getElementById('oCustomer').value,
+    items, total,
+    notes: document.getElementById('oNotes').value,
+  };
+  if (!d.customer_name) return alert('Customer name required');
+  await apiFetch('/api/orders', 'POST', d);
+  closeModal('orderModal');
+  loadOrders();
+  loadDashboard();
+}
+
+async function updateOrderStatus(id, status) {
+  await apiFetch('/api/orders/' + id, 'PUT', { status });
+  loadOrders();
+}
+
+async function deleteOrder(id) {
+  if (!confirm('Delete order?')) return;
+  await apiFetch('/api/orders/' + id, 'DELETE');
+  loadOrders();
+  loadDashboard();
+}
+
+// ==================== INVOICES ====================
+let invoiceItems = [];
+
+function initInvoiceItems() {
+  invoiceItems = [];
+  document.getElementById('invoiceItemsList').innerHTML = '';
+  document.getElementById('invoiceTotal').textContent = '0.00';
+  document.getElementById('invCustomer').value = '';
+  document.getElementById('invDueDate').value = '';
+  document.getElementById('invNotes').value = '';
+  addInvoiceItem();
+}
+
+function addInvoiceItem() {
+  const row = document.createElement('div');
+  row.className = 'item-row';
+  const idx = Date.now();
+  row.innerHTML = `
+    <input type="text" placeholder="e.g. Web Design, Logo...">
+    <input type="number" value="1" min="1" oninput="calcInvoiceTotal()">
+    <input type="number" placeholder="0.00" step="0.01" oninput="calcInvoiceTotal()">
+    <button class="item-remove" onclick="this.parentElement.remove();calcInvoiceTotal()">✕</button>
+  `;
+  document.getElementById('invoiceItemsList').appendChild(row);
+}
+
+function calcInvoiceTotal() {
+  let total = 0;
+  document.querySelectorAll('#invoiceItemsList .item-row').forEach(row => {
+    const qty = parseFloat(row.querySelectorAll('input')[1].value) || 0;
+    const price = parseFloat(row.querySelectorAll('input')[2].value) || 0;
+    total += qty * price;
+  });
+  document.getElementById('invoiceTotal').textContent = total.toFixed(2);
+}
+
+function fmtDateTime(raw) {
+  if (!raw) return '—';
+  const d = new Date(raw);
+  if (isNaN(d)) return '—';
+  const date = d.toLocaleDateString('en-GB'); // DD/MM/YYYY
+  const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); // HH:MM
+  return `<span style="display:block;font-size:13px;font-weight:600">${date}</span>
+          <span style="display:block;font-size:11px;color:var(--text-muted)">🕐 ${time}</span>`;
+}
+
+async function loadInvoices() {
+  const data = await apiFetch('/api/invoices');
+  const tb = document.getElementById('invoicesList');
+  if (!data || !data.length) {
+    tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:30px">No invoices yet</td></tr>';
+    return;
   }
+  tb.innerHTML = data.map(inv => {
+    const items = Array.isArray(inv.items) ? inv.items : [];
+    const itemStr = items.length
+      ? items.map(i =>
+          `<span style="display:inline-block;background:#ede9fe;color:#5b21b6;
+            padding:2px 8px;border-radius:12px;font-size:11px;margin:2px;
+            white-space:nowrap">${i.name} ×${i.qty}</span>`
+        ).join('')
+      : '<span style="color:var(--text-muted);font-size:12px">—</span>';
+
+    const actions = `
+      <div style="display:flex;gap:4px;align-items:center">
+        ${inv.status !== 'paid'
+          ? `<button class="btn btn-success btn-sm" onclick="markInvoicePaid(${inv.id})">✅ Paid</button>`
+          : ''}
+        <button class="btn btn-secondary btn-sm" onclick="printInvoice(${inv.id})">🖨️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteInvoice(${inv.id})">🗑️</button>
+      </div>`;
+
+    return `
+      <tr>
+        <td><strong style="white-space:nowrap">${inv.invoice_number || 'INV-' + String(inv.id).padStart(4,'0')}</strong></td>
+        <td style="white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis">${inv.customer_name}</td>
+        <td style="max-width:200px">${itemStr}</td>
+        <td style="white-space:nowrap"><strong>$${parseFloat(inv.total).toFixed(2)}</strong></td>
+        <td><span class="badge ${inv.status==='paid'?'badge-success':'badge-warning'}">${inv.status}</span></td>
+        <td style="white-space:nowrap">${fmtDateTime(inv.created_at)}</td>
+        <td>${actions}</td>
+      </tr>
+    `;
+  }).join('');
 }
 
-async function saveExpense(){
-  await fetch('/api/expenses',{method:'POST',headers:headers(),body:JSON.stringify({category:document.getElementById('exp-cat').value,amount:document.getElementById('exp-amount').value,note:document.getElementById('exp-note').value,date:document.getElementById('exp-date').value})});
-  closeModal('modal-expense'); loadProfit();
+async function saveInvoice() {
+  const items = [];
+  document.querySelectorAll('#invoiceItemsList .item-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const name = inputs[0].value.trim();
+    const qty = parseFloat(inputs[1].value) || 1;
+    const price = parseFloat(inputs[2].value) || 0;
+    if (name) items.push({ name, qty, price });
+  });
+  const total = items.reduce((s, i) => s + i.qty * i.price, 0);
+  const d = {
+    customer_name: document.getElementById('invCustomer').value,
+    items, total,
+    due_date: document.getElementById('invDueDate').value || null,
+    notes: document.getElementById('invNotes').value,
+  };
+  if (!d.customer_name) return alert('Customer name required');
+  if (!items.length) return alert('Add at least one item');
+  await apiFetch('/api/invoices', 'POST', d);
+  closeModal('invoiceModal');
+  loadInvoices();
+  loadDashboard();
 }
 
-// ── MARKETING ────────────────────────────────────────────────────────
-async function generateCampaign(){
-  const fd=new FormData();
-  fd.append('type','ads'); fd.append('product_name',document.getElementById('camp-products').value);
-  fd.append('price',''); fd.append('extra',`Campaign:${document.getElementById('camp-name').value}\nBudget:$${document.getElementById('camp-budget').value}\nTarget:${document.getElementById('camp-target').value}`);
-  document.getElementById('camp-loading').style.display='block'; document.getElementById('camp-result').style.display='none';
-  const r=await fetch('/api/ai/generate',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd}).then(r=>r.json());
-  document.getElementById('camp-result').textContent=r.result||r.error; document.getElementById('camp-result').style.display='block';
-  document.getElementById('camp-loading').style.display='none';
+async function markInvoicePaid(id) {
+  await apiFetch('/api/invoices/' + id, 'PUT', { status: 'paid' });
+  loadInvoices();
 }
 
-// ── FREELANCER ───────────────────────────────────────────────────────
-async function saveProject(){
-  await fetch('/api/projects',{method:'POST',headers:headers(),body:JSON.stringify({client_name:document.getElementById('proj-client').value,client_phone:document.getElementById('proj-phone').value,title:document.getElementById('proj-title').value,description:document.getElementById('proj-desc').value,price:document.getElementById('proj-price').value,cost:document.getElementById('proj-cost').value,deadline:document.getElementById('proj-deadline').value})});
-  closeModal('modal-project'); loadProjects();
+async function deleteInvoice(id) {
+  if (!confirm('Delete invoice?')) return;
+  await apiFetch('/api/invoices/' + id, 'DELETE');
+  loadInvoices();
+  loadDashboard();
 }
 
-async function loadProjects(){
-  const data=await fetch('/api/projects',{headers:hdr()}).then(r=>r.json());
-  const earned=data.filter(p=>p.status==='completed').reduce((s,p)=>s+(+p.price||0),0);
-  document.getElementById('freelancer-stats').innerHTML=`
-    <div class="stat-card" style="--accent:#6c5ce7"><span class="stat-ico">💻</span><div class="stat-val">${data.length}</div><div class="stat-lbl">Projects</div></div>
-    <div class="stat-card" style="--accent:#00cec9"><span class="stat-ico">⚡</span><div class="stat-val">${data.filter(p=>p.status==='active').length}</div><div class="stat-lbl">Active</div></div>
-    <div class="stat-card" style="--accent:#00b894"><span class="stat-ico">💰</span><div class="stat-val">${fmt(earned)}</div><div class="stat-lbl">Total Earned</div></div>
-  `;
-  const rows=data.map(p=>`<tr>
-    <td><strong>${p.client_name}</strong></td><td>${p.title}</td><td>${fmt(p.price)}</td>
-    <td class="${p.price-p.cost>=0?'profit-pos':'profit-neg'}">${fmt(p.price-p.cost)}</td>
-    <td><select onchange="updateProjectStatus('${p.id}',this.value)" style="border:1px solid var(--border);border-radius:4px;padding:3px;background:var(--input-bg);color:var(--text)">
-      ${['active','completed','cancelled'].map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}
-    </select></td>
-    <td>${fmtDate(p.deadline)||'-'}</td>
-  </tr>`).join('');
-  document.getElementById('projects-body').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;color:var(--sub);padding:30px">No projects</td></tr>';
+async function printInvoice(id) {
+  const data = await apiFetch('/api/invoices');
+  const inv = data.find(i => i.id === id);
+  if (!inv) return;
+  const items = Array.isArray(inv.items) ? inv.items : [];
+  const itemRows = items.map(i => `
+    <tr>
+      <td>${i.name}</td>
+      <td style="text-align:center">${i.qty}</td>
+      <td style="text-align:right">$${parseFloat(i.price).toFixed(2)}</td>
+      <td style="text-align:right">$${(i.qty * i.price).toFixed(2)}</td>
+    </tr>
+  `).join('');
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>${inv.invoice_number}</title>
+  <style>
+    body{font-family:'Segoe UI',sans-serif;padding:40px;color:#1e293b;max-width:600px;margin:0 auto}
+    h1{color:#6c63ff;margin-bottom:4px} .sub{color:#64748b;font-size:14px}
+    .info{display:flex;justify-content:space-between;margin:24px 0;background:#f8f9ff;padding:16px;border-radius:10px}
+    table{width:100%;border-collapse:collapse;margin-top:20px}
+    th{background:#6c63ff;color:#fff;padding:10px;text-align:left}
+    td{padding:10px;border-bottom:1px solid #e2e8f0}
+    .total{text-align:right;font-size:18px;font-weight:700;margin-top:16px;color:#6c63ff}
+    .status{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;
+      background:${inv.status==='paid'?'#dcfce7':'#fef3c7'};color:${inv.status==='paid'?'#16a34a':'#b45309'}}
+    @media print{.no-print{display:none}}
+  </style></head><body>
+  <h1>💰 Luy AI</h1><p class="sub">Smart Business — Invoice</p>
+  <div class="info">
+    <div><strong>${inv.invoice_number}</strong><br><span class="status">${inv.status}</span></div>
+    <div style="text-align:right">
+      <strong>${inv.customer_name}</strong><br>
+      <small>Due: ${inv.due_date ? inv.due_date.split('T')[0] : 'N/A'}</small>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>Item / Service</th><th style="text-align:center">Qty</th><th style="text-align:right">Price</th><th style="text-align:right">Total</th></tr></thead>
+    <tbody>${itemRows || '<tr><td colspan="4" style="text-align:center;color:#64748b">—</td></tr>'}</tbody>
+  </table>
+  <div class="total">Total: $${parseFloat(inv.total).toFixed(2)}</div>
+  ${inv.notes ? `<p style="margin-top:16px;color:#64748b;font-size:13px">Notes: ${inv.notes}</p>` : ''}
+  <button class="no-print" onclick="window.print()" style="margin-top:20px;padding:10px 24px;background:#6c63ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px">🖨️ Print</button>
+  </body></html>`);
 }
 
-async function updateProjectStatus(id,status){await fetch('/api/projects/'+id+'/status',{method:'PUT',headers:headers(),body:JSON.stringify({status})});}
-
-// ── REPORTS ──────────────────────────────────────────────────────────
-async function loadReports(period){
-  currentReport.period=period;
-  const data=await fetch('/api/reports?period='+period,{headers:hdr()}).then(r=>r.json());
-  document.getElementById('report-stats').innerHTML=`
-    <div class="stat-card" style="--accent:#6c5ce7"><span class="stat-ico">💰</span><div class="stat-val">${fmt(data.sales)}</div><div class="stat-lbl">Sales</div></div>
-    <div class="stat-card" style="--accent:#00b894"><span class="stat-ico">📈</span><div class="stat-val">${fmt(data.profit)}</div><div class="stat-lbl">Gross Profit</div></div>
-    <div class="stat-card" style="--accent:#d63031"><span class="stat-ico">💸</span><div class="stat-val">${fmt(data.expenses)}</div><div class="stat-lbl">Expenses</div></div>
-    <div class="stat-card" style="--accent:#00cec9"><span class="stat-ico">💎</span><div class="stat-val">${fmt(data.netProfit)}</div><div class="stat-lbl">Net Profit</div></div>
-    <div class="stat-card" style="--accent:#fdcb6e"><span class="stat-ico">🛒</span><div class="stat-val">${data.orders}</div><div class="stat-lbl">Orders</div></div>
-  `;
-  if(data.dailySales?.length>0){
-    const labels=data.dailySales.map(x=>x.date?.toString().slice(5,10));
-    const vals=data.dailySales.map(x=>+x.sales||0);
-    reportChartInst=drawChart('report-chart',labels,vals,'Sales','#6c5ce7',reportChartInst);
-  }
+// ==================== CUSTOMERS ====================
+async function loadCustomers() {
+  const data = await apiFetch('/api/customers');
+  const tb = document.getElementById('customersList');
+  if (!data || !data.length) { tb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">No customers yet</td></tr>'; return; }
+  tb.innerHTML = data.map(c => `
+    <tr>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.phone || '—'}</td>
+      <td>${c.email || '—'}</td>
+      <td>${c.address || '—'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteCustomer(${c.id})">🗑️</button></td>
+    </tr>
+  `).join('');
 }
 
-async function getAIAnalysis(){
-  const data=await fetch('/api/reports?period='+currentReport.period,{headers:hdr()}).then(r=>r.json());
-  const r=await fetch('/api/ai/report',{method:'POST',headers:headers(),body:JSON.stringify({...data,period:currentReport.period})}).then(r=>r.json());
-  const el=document.getElementById('ai-analysis'); el.textContent=r.analysis; el.style.display='block';
+async function saveCustomer() {
+  const d = {
+    name: document.getElementById('cName').value,
+    phone: document.getElementById('cPhone').value,
+    email: document.getElementById('cEmail').value,
+    address: document.getElementById('cAddress').value,
+    notes: document.getElementById('cNotes').value,
+  };
+  if (!d.name) return alert('Name required');
+  await apiFetch('/api/customers', 'POST', d);
+  closeModal('customerModal');
+  loadCustomers();
+  loadDashboard();
 }
 
-
-// ── ADMIN ────────────────────────────────────────────────────────────
-let adminChartInst=null, planChartInst=null;
-
-async function checkAdmin(){
-  try{
-    const r=await fetch('/api/admin/check',{headers:hdr()}).then(r=>r.json());
-    if(r.isAdmin) document.getElementById('admin-nav').style.display='flex';
-  }catch{}
+async function deleteCustomer(id) {
+  if (!confirm('Delete customer?')) return;
+  await apiFetch('/api/customers/' + id, 'DELETE');
+  loadCustomers();
+  loadDashboard();
 }
 
-async function loadAdmin(){
-  const [stats,users]=await Promise.all([
-    fetch('/api/admin/stats',{headers:hdr()}).then(r=>r.json()),
-    fetch('/api/admin/users',{headers:hdr()}).then(r=>r.json())
+// ==================== PROFIT ====================
+async function loadProfit() {
+  const [sales, expenses] = await Promise.all([
+    apiFetch('/api/sales'),
+    apiFetch('/api/expenses'),
   ]);
+  const totalSales = (sales || []).reduce((s, x) => s + parseFloat(x.total || 0), 0);
+  const totalExp = (expenses || []).reduce((s, x) => s + parseFloat(x.amount || 0), 0);
+  const profit = totalSales - totalExp;
+  document.getElementById('profitIncome').textContent = '$' + totalSales.toFixed(2);
+  document.getElementById('profitExpense').textContent = '$' + totalExp.toFixed(2);
+  document.getElementById('profitNet').textContent = '$' + profit.toFixed(2);
 
-  // Stats cards
-  document.getElementById('admin-stats').innerHTML=`
-    <div class="stat-card" style="--accent:#6c5ce7"><span class="stat-ico">👥</span><div class="stat-val">${stats.totalUsers}</div><div class="stat-lbl">Total Users</div></div>
-    <div class="stat-card" style="--accent:#00b894"><span class="stat-ico">🛒</span><div class="stat-val">${stats.totalOrders}</div><div class="stat-lbl">Total Orders</div></div>
-    <div class="stat-card" style="--accent:#00cec9"><span class="stat-ico">💰</span><div class="stat-val">${fmt(stats.totalRevenue)}</div><div class="stat-lbl">Total Revenue</div></div>
-    <div class="stat-card" style="--accent:#fdcb6e"><span class="stat-ico">📦</span><div class="stat-val">${stats.totalProducts}</div><div class="stat-lbl">Products Listed</div></div>
-    <div class="stat-card" style="--accent:#b2bec3"><span class="stat-ico">🆓</span><div class="stat-val">${stats.freeUsers}</div><div class="stat-lbl">Free Users</div></div>
-    <div class="stat-card" style="--accent:#e17055"><span class="stat-ico">💎</span><div class="stat-val">${stats.proUsers}</div><div class="stat-lbl">Pro Users</div></div>
-  `;
+  const tb = document.getElementById('expensesList');
+  if (!expenses || !expenses.length) { tb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">No expenses yet</td></tr>'; return; }
+  tb.innerHTML = expenses.map(e => `
+    <tr>
+      <td><span class="badge badge-info">${e.category}</span></td>
+      <td><strong>$${parseFloat(e.amount).toFixed(2)}</strong></td>
+      <td>${e.description || '—'}</td>
+      <td>${e.date ? e.date.split('T')[0] : '—'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteExpense(${e.id})">🗑️</button></td>
+    </tr>
+  `).join('');
+}
 
-  // Signup chart
-  if(stats.dailySignups?.length>0){
-    const labels=stats.dailySignups.map(x=>x.date?.toString().slice(5,10));
-    const vals=stats.dailySignups.map(x=>+x.new_users||0);
-    adminChartInst=drawChart('admin-chart',labels,vals,'New Users','#6c5ce7',adminChartInst);
+async function saveExpense() {
+  const d = {
+    category: document.getElementById('expCat').value,
+    amount: document.getElementById('expAmount').value,
+    description: document.getElementById('expDesc').value,
+    date: document.getElementById('expDate').value || new Date().toISOString().split('T')[0],
+  };
+  await apiFetch('/api/expenses', 'POST', d);
+  closeModal('expenseModal');
+  loadProfit();
+  loadDashboard();
+}
+
+async function deleteExpense(id) {
+  if (!confirm('Delete expense?')) return;
+  await apiFetch('/api/expenses/' + id, 'DELETE');
+  loadProfit();
+  loadDashboard();
+}
+
+// ==================== ADMIN ====================
+async function loadAdminUsers() {
+  const data = await apiFetch('/api/admin/users');
+  const tb = document.getElementById('adminUsersList');
+  if (!data || !data.length) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px">No users</td></tr>'; return; }
+  tb.innerHTML = data.map(u => `
+    <tr>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.email}</td>
+      <td>
+        <select onchange="updateUser(${u.id},'role',this.value)">
+          <option ${u.role==='user'?'selected':''}>user</option>
+          <option ${u.role==='admin'?'selected':''}>admin</option>
+        </select>
+      </td>
+      <td>
+        <select onchange="updateUser(${u.id},'plan',this.value)">
+          <option ${u.plan==='free'?'selected':''}>free</option>
+          <option ${u.plan==='basic'?'selected':''}>basic</option>
+          <option ${u.plan==='pro'?'selected':''}>pro</option>
+        </select>
+      </td>
+      <td>${u.created_at ? u.created_at.split('T')[0] : '—'}</td>
+      <td>
+        ${u.id !== currentUser.id
+          ? `<button class="btn btn-danger btn-sm" onclick="deleteAdminUser(${u.id})">🗑️</button>`
+          : '<span style="color:var(--text-muted);font-size:12px">You</span>'}
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function updateUser(id, field, value) {
+  const body = {};
+  body[field] = value;
+  // Also need to send the other field
+  const row = event.target.closest('tr');
+  const selects = row.querySelectorAll('select');
+  body.role = selects[0].value;
+  body.plan = selects[1].value;
+  await apiFetch('/api/admin/users/' + id, 'PUT', body);
+}
+
+async function deleteAdminUser(id) {
+  if (!confirm('Delete this user?')) return;
+  await apiFetch('/api/admin/users/' + id, 'DELETE');
+  loadAdminUsers();
+}
+
+// ==================== AI SELLER ====================
+function setAiType(el, type) {
+  document.querySelectorAll('.ai-type-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentAiType = type;
+}
+
+async function generateAI() {
+  const product_name = document.getElementById('aiProduct').value;
+  const description = document.getElementById('aiDesc').value;
+  const language = document.getElementById('aiLang').value;
+  const image = document.getElementById('aiImage').files[0];
+  const resultEl = document.getElementById('aiResult');
+
+  resultEl.innerHTML = '<div class="loading">⚡ Generating...</div>';
+
+  const formData = new FormData();
+  formData.append('type', currentAiType);
+  formData.append('product_name', product_name);
+  formData.append('description', description);
+  formData.append('language', language);
+  if (image) formData.append('image', image);
+
+  try {
+    const r = await fetch('/api/ai/generate', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData,
+    });
+    const data = await r.json();
+    resultEl.textContent = data.result || data.error || 'Error generating';
+  } catch(e) {
+    resultEl.textContent = 'Error: ' + e.message;
   }
-
-  // Plan pie chart
-  const planCtx=document.getElementById('plan-chart')?.getContext('2d');
-  if(planCtx){
-    if(planChartInst) planChartInst.destroy();
-    planChartInst=new Chart(planCtx,{type:'doughnut',data:{
-      labels:['Free','Pro'],
-      datasets:[{data:[stats.freeUsers,stats.proUsers],backgroundColor:['#b2bec3','#6c5ce7'],borderWidth:0}]
-    },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
-  }
-
-  // Users table
-  document.getElementById('user-count').textContent=users.length;
-  const rows=users.map((u,i)=>`<tr>
-    <td>${i+1}</td>
-    <td><strong>${u.name}</strong></td>
-    <td style="font-size:12px">${u.email}</td>
-    <td>${u.shop_name||'-'}</td>
-    <td>
-      <select onchange="changePlan('${u.id}',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;background:var(--input-bg);color:var(--text);font-size:12px">
-        ${['free','pro','business'].map(p=>`<option value="${p}" ${u.plan===p?'selected':''}>${p==='free'?'🆓':p==='pro'?'💎':'🏆'} ${p}</option>`).join('')}
-      </select>
-    </td>
-    <td>${u.total_orders}</td>
-    <td>${fmt(u.total_sales)}</td>
-    <td>${u.total_products}</td>
-    <td style="font-size:11px;color:var(--sub)">${u.created_at?.toString().slice(0,10)}</td>
-    <td>
-      <button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}','${u.name}')">🗑</button>
-    </td>
-  </tr>`).join('');
-  document.getElementById('admin-users-body').innerHTML=rows||'<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--sub)">No users</td></tr>';
 }
 
-async function changePlan(id,plan){
-  await fetch('/api/admin/users/'+id+'/plan',{method:'PUT',headers:headers(),body:JSON.stringify({plan})});
-  alert('✅ Plan updated to '+plan+'!');
-}
-
-async function deleteUser(id,name){
-  if(!confirm('DELETE user '+name+'?\n⚠️ This will delete ALL their data!')) return;
-  await fetch('/api/admin/users/'+id,{method:'DELETE',headers:hdr()});
-  loadAdmin();
-}
-
-// ── FILTER ───────────────────────────────────────────────────────────
-function filterTable(input,tableId){
-  const q=input.value.toLowerCase();
-  document.querySelectorAll('#'+tableId+' tbody tr').forEach(tr=>{tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none';});
+function copyAiResult() {
+  const text = document.getElementById('aiResult').textContent;
+  navigator.clipboard.writeText(text).then(() => alert('Copied!'));
 }
 </script>
 </body>
