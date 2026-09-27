@@ -563,6 +563,23 @@ app.post('/api/ai/generate', authenticateToken, upload.single('image'), async (r
   }
 });
 
+// ==================== TEMP PASSWORD RESET (use once, then remove) ====================
+app.post('/api/reset-pw', async (req, res) => {
+  try {
+    const { email, new_password, secret } = req.body;
+    if (secret !== 'luyai-reset-2026') return res.status(403).json({ error: 'Wrong secret' });
+    const hashed = await bcrypt.hash(new_password, 10);
+    const result = await pool.query(
+      'UPDATE users SET password=$1 WHERE email=$2 RETURNING id, name, email',
+      [hashed, email]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'Email not found' });
+    res.json({ success: true, user: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ==================== START ====================
 initDB().then(() => {
   app.listen(PORT, () => {
