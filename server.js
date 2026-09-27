@@ -545,7 +545,7 @@ app.post('/api/ai/generate', authenticateToken, upload.single('image'), async (r
       prompt = description || 'Help me with my business.';
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.8-flash' });
 
     let result;
     if (req.file) {
