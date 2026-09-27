@@ -568,7 +568,109 @@ app.post('/api/ai/generate', authenticateToken, upload.single('image'), async (r
   }
 });
 
-// ==================== TEMP PASSWORD RESET (use once, then remove) ====================
+// ==================== TTS VIDEO (MP4 with Khmer Voice) ====================
+app.post('/api/ai/tts-video', authenticateToken, async (req, res) => {
+  const audioPath = `uploads/audio_${Date.now()}.mp3`;
+  const videoPath = `uploads/video_${Date.now()}.mp4`;
+
+  try {
+    const { text, voice } = req.body;
+    if (!text) return res.status(400).json({ error: 'Text required' });
+
+    const selectedVoice = voice === 'sreymom'
+      ? 'km-KH-SreymomNeural'
+      : 'km-KH-PisethNeural';
+
+    // Dynamic import msedge-tts
+    const { MsEdgeTTS, OUTPUT_FORMAT } = require('msedge-tts');
+    const tts = new MsEdgeTTS();
+    await tts.setMetadata(selectedVoice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+
+    // Generate audio stream → file
+    await new Promise((resolve, reject) => {
+      const { audio } = tts.toStream(text);
+      const ws = fs.createWriteStream(audioPath);
+      audio.pipe(ws);
+      ws.on('finish', resolve);
+      ws.on('error', reject);
+      audio.on('error', reject);
+    });
+
+    // Create MP4: brand background + audio
+    const ffmpeg = require('fluent-ffmpeg');
+    const ffmpegPath = require('ffmpeg-static');
+    ffmpeg.setFfmpegPath(ffmpegPath);
+
+    await new Promise((resolve, reject) => {
+      ffmpeg()
+        .input('color=c=0x1e1b4b:s=1280x720:r=25')
+        .inputFormat('lavfi')
+        .input(audioPath)
+        .outputOptions([
+          '-c:v libx264',
+          '-tune stillimage',
+          '-c:a aac',
+          '-b:a 128k',
+          '-shortest',
+          '-pix_fmt yuv420p'
+        ])
+        .save(videoPath)
+        .on('end', resolve)
+        .on('error', reject);
+    });
+
+    // Stream MP4 back
+    res.setHeader('Content-Type', 'video/mp4');
+    res.setHeader('Content-Disposition', 'attachment; filename="luy-ai-video.mp4"');
+    const stream = fs.createReadStream(videoPath);
+    stream.pipe(res);
+    stream.on('end', () => {
+      try { fs.unlinkSync(audioPath); } catch(e) {}
+      try { fs.unlinkSync(videoPath); } catch(e) {}
+    });
+  } catch (err) {
+    try { fs.unlinkSync(audioPath); } catch(e) {}
+    try { fs.unlinkSync(videoPath); } catch(e) {}
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==================== TTS AUDIO ONLY (MP3 preview) ====================
+app.post('/api/ai/tts-audio', authenticateToken, async (req, res) => {
+  const audioPath = `uploads/audio_${Date.now()}.mp3`;
+  try {
+    const { text, voice } = req.body;
+    if (!text) return res.status(400).json({ error: 'Text required' });
+
+    const selectedVoice = voice === 'sreymom'
+      ? 'km-KH-SreymomNeural'
+      : 'km-KH-PisethNeural';
+
+    const { MsEdgeTTS, OUTPUT_FORMAT } = require('msedge-tts');
+    const tts = new MsEdgeTTS();
+    await tts.setMetadata(selectedVoice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+
+    await new Promise((resolve, reject) => {
+      const { audio } = tts.toStream(text);
+      const ws = fs.createWriteStream(audioPath);
+      audio.pipe(ws);
+      ws.on('finish', resolve);
+      ws.on('error', reject);
+      audio.on('error', reject);
+    });
+
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Content-Disposition', 'inline; filename="preview.mp3"');
+    const stream = fs.createReadStream(audioPath);
+    stream.pipe(res);
+    stream.on('end', () => { try { fs.unlinkSync(audioPath); } catch(e) {} });
+  } catch (err) {
+    try { fs.unlinkSync(audioPath); } catch(e) {}
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 app.post('/api/reset-pw', async (req, res) => {
   try {
     const { email, new_password, secret } = req.body;
