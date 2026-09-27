@@ -618,19 +618,33 @@ async function doLogin() {
 }
 
 async function doRegister() {
-  const name = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
+  const name     = document.getElementById('regName').value.trim();
+  const email    = document.getElementById('regEmail').value.trim();
   const password = document.getElementById('regPass').value;
-  const err = document.getElementById('regErr');
+  const err      = document.getElementById('regErr');
   err.textContent = '';
+
+  if (!name)            return err.textContent = '⚠️ Please enter your name';
+  if (!email)           return err.textContent = '⚠️ Please enter your email';
+  if (password.length < 6) return err.textContent = '⚠️ Password must be at least 6 characters';
+
   try {
     const r = await apiFetch('/api/register', 'POST', { name, email, password }, false);
-    if (r.error) return err.textContent = r.error;
+    if (r.error) {
+      if (r.error.includes('already')) {
+        err.innerHTML = '⚠️ Email already registered. <a href="#" onclick="switchAuth(\'login\')" style="color:var(--primary);font-weight:700">Login instead →</a>';
+      } else {
+        err.textContent = '⚠️ ' + r.error;
+      }
+      return;
+    }
     localStorage.setItem('token', r.token);
     token = r.token;
     currentUser = r.user;
     initApp();
-  } catch(e) { err.textContent = 'Register failed'; }
+  } catch(e) {
+    err.textContent = '⚠️ Cannot connect to server. Try again.';
+  }
 }
 
 function doLogout() {
