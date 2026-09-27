@@ -28,9 +28,10 @@ app.use(express.static('public'));
 
 // ==================== INIT DATABASE ====================
 async function initDB() {
+  // Users table — id as TEXT to match existing DB
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
-      id SERIAL PRIMARY KEY,
+      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
       name VARCHAR(255) NOT NULL,
       email VARCHAR(255) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
@@ -43,7 +44,7 @@ async function initDB() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS products (
       id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      user_id TEXT,
       name VARCHAR(255) NOT NULL,
       category VARCHAR(255),
       price DECIMAL(10,2) DEFAULT 0,
@@ -57,7 +58,7 @@ async function initDB() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS orders (
       id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      user_id TEXT,
       customer_name VARCHAR(255),
       items TEXT DEFAULT '[]',
       total DECIMAL(10,2) DEFAULT 0,
@@ -70,7 +71,7 @@ async function initDB() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS invoices (
       id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      user_id TEXT,
       invoice_number VARCHAR(50),
       customer_name VARCHAR(255),
       items TEXT DEFAULT '[]',
@@ -85,7 +86,7 @@ async function initDB() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS customers (
       id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      user_id TEXT,
       name VARCHAR(255) NOT NULL,
       phone VARCHAR(50),
       email VARCHAR(255),
@@ -98,7 +99,7 @@ async function initDB() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS expenses (
       id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      user_id TEXT,
       category VARCHAR(255),
       amount DECIMAL(10,2) DEFAULT 0,
       description TEXT,
@@ -110,7 +111,7 @@ async function initDB() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS sales (
       id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      user_id TEXT,
       product_name VARCHAR(255),
       quantity INTEGER DEFAULT 1,
       unit_price DECIMAL(10,2) DEFAULT 0,
@@ -121,14 +122,15 @@ async function initDB() {
     )
   `);
 
-  // Migrations — add missing columns safely
+  // Safe migrations — add missing columns only
   const migrations = [
     `ALTER TABLE invoices ADD COLUMN IF NOT EXISTS items TEXT DEFAULT '[]'`,
     `ALTER TABLE invoices ADD COLUMN IF NOT EXISTS invoice_number VARCHAR(50)`,
     `ALTER TABLE orders   ADD COLUMN IF NOT EXISTS items TEXT DEFAULT '[]'`,
+    `ALTER TABLE users    ADD COLUMN IF NOT EXISTS plan VARCHAR(50) DEFAULT 'free'`,
   ];
   for (const sql of migrations) {
-    try { await pool.query(sql); } catch (e) { /* already exists */ }
+    try { await pool.query(sql); } catch (e) { /* column exists */ }
   }
 
   console.log('✅ Database initialized');
@@ -161,8 +163,11 @@ app.post('/api/register', async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
     const count = await pool.query('SELECT COUNT(*) FROM users');
     const role = parseInt(count.rows[0].count) === 0 ? 'admin' : 'user';
+    // Use gen_random_uuid() for TEXT id compatibility
     const result = await pool.query(
-      'INSERT INTO users (name, email, password, role) VALUES ($1,$2,$3,$4) RETURNING id,name,email,role,plan',
+      `INSERT INTO users (id, name, email, password, role)
+       VALUES (gen_random_uuid()::text, $1, $2, $3, $4)
+       RETURNING id, name, email, role, plan`,
       [name, email, hashed, role]
     );
     const user = result.rows[0];
