@@ -584,8 +584,81 @@ app.post('/api/ai/generate', authenticateToken, upload.single('image'), async (r
   }
 });
 
-// ==================== TTS VIDEO (MP4 with Khmer Voice) ====================
+// ==================== GOOGLE TTS HELPER ====================
+async function googleTTS(text, lang = 'km') {
+  // Split text into chunks max 200 chars
+  const chunks = [];
+  const words = text.split(' ');
+  let chunk = '';
+  for (const word of words) {
+    if ((chunk + ' ' + word).length > 180) {
+      if (chunk) chunks.push(chunk.trim());
+      chunk = word;
+    } else {
+      chunk += (chunk ? ' ' : '') + word;
+    }
+  }
+  if (chunk) chunks.push(chunk.trim());
+
+  const buffers = [];
+  for (const c of chunks) {
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(c)}&tl=${lang}&client=tw-ob&ttsspeed=0.9`;
+    const r = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Referer': 'https://translate.google.com/'
+      }
+    });
+    if (!r.ok) throw new Error('Google TTS error: ' + r.status);
+    const buf = Buffer.from(await r.arrayBuffer());
+    buffers.push(buf);
+  }
+  return Buffer.concat(buffers);
+}
+
+// ==================== TTS PREVIEW (Play in browser) ====================
+app.post('/api/ai/tts-audio', authenticateToken, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) return res.status(400).json({ error: 'Text required' });
+
+    // Clean text — remove markdown symbols
+    const cleanText = text.replace(/\*\*/g, '').replace(/#{1,6}/g, '').replace(/\n+/g, ' ').trim();
+    const shortText = cleanText.substring(0, 500); // limit 500 chars for preview
+
+    const audioBuffer = await googleTTS(shortText, 'km');
+
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Content-Disposition', 'inline; filename="preview.mp3"');
+    res.setHeader('Content-Length', audioBuffer.length);
+    res.end(audioBuffer);
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'TTS failed' });
+  }
+});
+
+// ==================== TTS DOWNLOAD (MP3 full) ====================
 app.post('/api/ai/tts-video', authenticateToken, async (req, res) => {
+  try {
+    const { text, voice } = req.body;
+    if (!text) return res.status(400).json({ error: 'Text required' });
+
+    // Clean text — remove markdown
+    const cleanText = text.replace(/\*\*/g, '').replace(/#{1,6}/g, '').replace(/\n+/g, ' ').trim();
+
+    const audioBuffer = await googleTTS(cleanText, 'km');
+    const voiceName = voice === 'sreymom' ? 'sreymom' : 'piseth';
+
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Content-Disposition', `attachment; filename="luy-ai-${voiceName}.mp3"`);
+    res.setHeader('Content-Length', audioBuffer.length);
+    res.end(audioBuffer);
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'TTS failed' });
+  }
+});
+
+
   // Redirect to audio - ffmpeg not available on free tier
   // Return MP3 audio as download instead
   const audioPath = `uploads/video_audio_${Date.now()}.mp3`;
@@ -628,48 +701,6 @@ app.post('/api/ai/tts-video', authenticateToken, async (req, res) => {
   }
 });
 
-// ==================== TTS AUDIO ONLY (MP3 preview) ====================
-app.post('/api/ai/tts-audio', authenticateToken, async (req, res) => {
-  const audioPath = `uploads/audio_${Date.now()}.mp3`;
-  try {
-    const { text, voice } = req.body;
-    if (!text) return res.status(400).json({ error: 'Text required' });
-
-    // Check msedge-tts available
-    let MsEdgeTTS, OUTPUT_FORMAT;
-    try {
-      ({ MsEdgeTTS, OUTPUT_FORMAT } = require('msedge-tts'));
-    } catch(e) {
-      return res.status(500).json({ error: 'TTS package not installed. Run: npm install msedge-tts' });
-    }
-
-    const selectedVoice = voice === 'sreymom'
-      ? 'km-KH-SreymomNeural'
-      : 'km-KH-PisethNeural';
-
-    const tts = new MsEdgeTTS();
-    await tts.setMetadata(selectedVoice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
-
-    await new Promise((resolve, reject) => {
-      const { audio } = tts.toStream(text);
-      const ws = fs.createWriteStream(audioPath);
-      audio.pipe(ws);
-      ws.on('finish', resolve);
-      ws.on('error', reject);
-      audio.on('error', reject);
-    });
-
-    res.setHeader('Content-Type', 'audio/mpeg');
-    res.setHeader('Content-Disposition', 'inline; filename="preview.mp3"');
-    const stream = fs.createReadStream(audioPath);
-    stream.pipe(res);
-    stream.on('end', () => { try { fs.unlinkSync(audioPath); } catch(e) {} });
-    stream.on('error', (e) => { res.status(500).json({ error: e.message }); });
-  } catch (err) {
-    try { fs.unlinkSync(audioPath); } catch(e) {}
-    res.status(500).json({ error: err.message || 'TTS failed' });
-  }
-});
 
 
 app.post('/api/reset-pw', async (req, res) => {
