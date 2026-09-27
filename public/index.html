@@ -2,480 +2,506 @@
 <html lang="km">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💰 Luy AI — ជំនួយការអាជីវកម្មខ្មែរ</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>💰 Luy AI — Smart Business</title>
+<link rel="manifest" href="/manifest.json">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
-:root{--primary:#6c5ce7;--secondary:#00cec9;--success:#00b894;--danger:#d63031;--warning:#fdcb6e;--dark:#1a1a2e;--card:#fff;--sidebar:#1a1a2e}
+:root{
+  --bg:#f0f2f5;--card:#fff;--sidebar:#1a1a2e;--text:#1a1a2e;--sub:#888;
+  --border:#e9ecef;--primary:#6c5ce7;--success:#00b894;--danger:#d63031;
+  --warning:#fdcb6e;--input-bg:#fff;--hover:#f8f9fa;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--card:#161b22;--text:#e6edf3;--sub:#8b949e;
+  --border:#30363d;--input-bg:#21262d;--hover:#21262d;--sidebar:#010409;
+}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);transition:.3s}
 
-/* LAYOUT */
+/* ── AUTH PAGE ─────────────────────── */
+#auth-page{display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)}
+.auth-box{background:rgba(255,255,255,.08);backdrop-filter:blur(20px);border-radius:20px;
+  padding:40px;width:90%;max-width:400px;border:1px solid rgba(255,255,255,.1)}
+.auth-logo{text-align:center;margin-bottom:24px}
+.auth-logo .icon{font-size:52px}
+.auth-logo h1{color:#fff;font-size:26px;font-weight:900;margin:8px 0}
+.auth-logo p{color:rgba(255,255,255,.6);font-size:13px}
+.auth-tabs{display:flex;background:rgba(255,255,255,.1);border-radius:10px;margin-bottom:24px}
+.auth-tab{flex:1;padding:10px;text-align:center;cursor:pointer;color:rgba(255,255,255,.6);
+  border-radius:10px;font-weight:600;font-size:14px;transition:.2s}
+.auth-tab.active{background:var(--primary);color:#fff}
+.auth-input{width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,.2);border-radius:10px;
+  background:rgba(255,255,255,.1);color:#fff;font-size:14px;margin-bottom:12px;outline:none}
+.auth-input::placeholder{color:rgba(255,255,255,.4)}
+.auth-input:focus{border-color:var(--primary)}
+.auth-btn{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;
+  border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s}
+.auth-btn:hover{opacity:.9;transform:translateY(-1px)}
+.auth-error{color:#ff6b6b;font-size:13px;margin-bottom:10px;display:none}
+
+/* ── APP LAYOUT ────────────────────── */
+#app-page{display:none}
 .app{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:240px;background:var(--sidebar);color:#fff;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sidebar{width:240px;background:var(--sidebar);color:#fff;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;transition:.3s}
 .main{flex:1;overflow-y:auto;padding:20px}
-.sidebar-logo{padding:20px;border-bottom:1px solid rgba(255,255,255,.1);text-align:center}
-.sidebar-logo h2{font-size:16px;color:#fff;margin-top:8px}
-.sidebar-logo span{font-size:11px;color:rgba(255,255,255,.5)}
-.nav-item{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;transition:.2s;font-size:14px;color:rgba(255,255,255,.75);border-left:3px solid transparent}
-.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:var(--primary)}
-.nav-item .icon{font-size:18px;width:24px;text-align:center}
 
-/* CARDS */
-.card{background:var(--card);border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.sidebar-logo{padding:20px;border-bottom:1px solid rgba(255,255,255,.08);text-align:center}
+.sidebar-logo .logo-icon{font-size:38px}
+.sidebar-logo h2{font-size:17px;font-weight:800;margin:6px 0 2px}
+.shop-name{font-size:11px;color:rgba(255,255,255,.5);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;
+  transition:.2s;font-size:13.5px;color:rgba(255,255,255,.7);border-left:3px solid transparent}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.08);color:#fff;border-left-color:var(--primary)}
+.nav-item .icon{font-size:17px;width:22px;text-align:center}
+
+.sidebar-bottom{padding:16px;border-top:1px solid rgba(255,255,255,.08)}
+.user-info{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.user-name{font-size:12px;font-weight:600;color:#fff}
+.user-email{font-size:10px;color:rgba(255,255,255,.4);overflow:hidden;text-overflow:ellipsis}
+.btn-logout{width:100%;padding:8px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);
+  border:1px solid rgba(255,255,255,.1);border-radius:8px;cursor:pointer;font-size:12px}
+.btn-logout:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+
+/* ── TOP BAR ───────────────────────── */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.page-title{font-size:22px;font-weight:800}
+.topbar-actions{display:flex;gap:10px;align-items:center}
+.dark-toggle{background:none;border:2px solid var(--border);color:var(--text);padding:8px 12px;
+  border-radius:8px;cursor:pointer;font-size:16px}
+
+/* ── CARDS ─────────────────────────── */
+.card{background:var(--card);border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:16px;border:1px solid var(--border)}
 .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.card-title{font-size:16px;font-weight:700;color:var(--dark)}
+.card-title{font-size:15px;font-weight:700}
 
-/* STAT CARDS */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:20px}
-.stat-card{background:var(--card);border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid var(--primary)}
-.stat-card .val{font-size:24px;font-weight:800;color:var(--dark)}
-.stat-card .lbl{font-size:12px;color:#888;margin-top:4px}
-.stat-card .ico{font-size:28px;float:right}
+/* ── STATS ─────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 2px 12px rgba(0,0,0,.06);
+  border:1px solid var(--border);position:relative;overflow:hidden;cursor:pointer;transition:.2s}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--accent,var(--primary))}
+.stat-val{font-size:22px;font-weight:800;color:var(--text)}
+.stat-lbl{font-size:11px;color:var(--sub);margin-top:4px}
+.stat-ico{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:28px;opacity:.3}
 
-/* BUTTONS */
-.btn{padding:10px 18px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:6px}
-.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{opacity:.9}
+/* ── BTNS ──────────────────────────── */
+.btn{padding:9px 16px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{opacity:.88}
 .btn-success{background:var(--success);color:#fff}
 .btn-danger{background:var(--danger);color:#fff}
 .btn-warning{background:var(--warning);color:#333}
-.btn-sm{padding:6px 12px;font-size:12px}
 .btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn-sm{padding:5px 11px;font-size:12px}
 
-/* FORMS */
+/* ── FORM ──────────────────────────── */
 .form-group{margin-bottom:14px}
-.form-group label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:6px}
-.form-control{width:100%;padding:10px 14px;border:2px solid #e9ecef;border-radius:8px;font-size:14px;transition:.2s;background:#fff}
+.form-group label{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-control{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-size:14px;transition:.2s;background:var(--input-bg);color:var(--text)}
 .form-control:focus{outline:none;border-color:var(--primary)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 
-/* TABLE */
+/* ── TABLE ─────────────────────────── */
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:#f8f9fa;padding:10px 14px;text-align:left;font-weight:700;color:#555;border-bottom:2px solid #e9ecef}
-td{padding:10px 14px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
-tr:hover td{background:#fafafa}
+th{background:var(--hover);padding:10px 14px;text-align:left;font-weight:700;color:var(--sub);border-bottom:2px solid var(--border);font-size:11px;text-transform:uppercase}
+td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:hover td{background:var(--hover)}
 
-/* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+/* ── MODAL ─────────────────────────── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
 .modal-overlay.show{display:flex}
-.modal{background:#fff;border-radius:16px;padding:24px;width:90%;max-width:520px;max-height:90vh;overflow-y:auto}
+.modal{background:var(--card);border-radius:16px;padding:24px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto;border:1px solid var(--border)}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.modal-title{font-size:18px;font-weight:800}
-.modal-close{cursor:pointer;font-size:22px;color:#999;background:none;border:none}
+.modal-title{font-size:17px;font-weight:800}
+.modal-close{cursor:pointer;font-size:22px;color:var(--sub);background:none;border:none;color:var(--text)}
 
-/* BADGES */
+/* ── BADGE ─────────────────────────── */
 .badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
 .badge-success{background:#d4edda;color:#155724}
 .badge-danger{background:#f8d7da;color:#721c24}
 .badge-warning{background:#fff3cd;color:#856404}
-.badge-info{background:#d1ecf1;color:#0c5460}
 
-/* AI RESULT */
-.ai-result{background:linear-gradient(135deg,#f8f0ff,#ffe8ff);border-radius:10px;padding:16px;border-left:4px solid var(--primary);white-space:pre-wrap;font-size:13px;line-height:1.8;margin-top:12px}
+/* ── AI ────────────────────────────── */
+.ai-result{background:linear-gradient(135deg,var(--hover),var(--card));border-radius:10px;padding:16px;
+  border-left:4px solid var(--primary);white-space:pre-wrap;font-size:13px;line-height:1.9;margin-top:12px;display:none}
 
-/* PAGE */
+/* ── CHART ─────────────────────────── */
+.chart-container{position:relative;height:220px}
+
+/* ── PAGE ──────────────────────────── */
 .page{display:none}.page.active{display:block}
-.page-title{font-size:22px;font-weight:800;color:var(--dark);margin-bottom:20px;display:flex;align-items:center;gap:10px}
 
-/* UPLOAD */
-.upload-area{border:2px dashed #ccc;border-radius:10px;padding:30px;text-align:center;cursor:pointer;transition:.2s}
-.upload-area:hover{border-color:var(--primary);background:#f8f0ff}
-.preview-img{width:120px;height:120px;object-fit:cover;border-radius:8px;margin-top:10px}
+/* ── UPLOAD ────────────────────────── */
+.upload-area{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:.2s;color:var(--sub)}
+.upload-area:hover{border-color:var(--primary);background:var(--hover)}
+.preview-img{width:100px;height:100px;object-fit:cover;border-radius:8px;margin-top:8px}
 
-/* RESPONSIVE */
+/* ── PRINT ─────────────────────────── */
+@media print{
+  .sidebar,.topbar,.modal-overlay,.no-print{display:none!important}
+  .main{padding:0;margin:0}
+  #print-invoice{display:block!important}
+}
+#print-invoice{display:none;font-family:'Segoe UI',sans-serif;padding:30px;color:#000}
+
+/* ── NOTIFICATION ──────────────────── */
+.notif-bar{background:#fff3cd;border:1px solid #ffc107;border-radius:10px;padding:12px 16px;
+  margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:13px}
+.notif-bar.danger{background:#f8d7da;border-color:#dc3545}
+
+/* ── MOBILE ────────────────────────── */
 @media(max-width:768px){
-  .sidebar{width:200px;position:fixed;z-index:100;height:100vh;transform:translateX(-100%);transition:.3s}
+  .sidebar{position:fixed;z-index:100;height:100vh;transform:translateX(-100%);transition:.3s}
   .sidebar.open{transform:translateX(0)}
-  .main{margin-left:0!important}
+  .hamburger{display:flex!important}
   .form-row{grid-template-columns:1fr}
   .stats-grid{grid-template-columns:1fr 1fr}
-  .hamburger{display:flex!important}
+  .main{padding:14px}
 }
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;position:fixed;top:12px;left:12px;z-index:200;background:#1a1a2e;border-radius:8px}
-.hamburger span{width:22px;height:2px;background:#fff;border-radius:2px}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;
+  position:fixed;top:12px;left:12px;z-index:200;background:var(--primary);border-radius:8px}
+.hamburger span{width:20px;height:2px;background:#fff;border-radius:2px}
 
-/* LOADING */
-.loading{text-align:center;padding:20px;color:#888}
-.spinner{width:32px;height:32px;border:3px solid #e9ecef;border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}
+.loading{text-align:center;padding:20px;color:var(--sub)}
+.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);
+  border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 8px}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* PROFIT COLORS */
 .profit-pos{color:var(--success);font-weight:700}
 .profit-neg{color:var(--danger);font-weight:700}
-
-/* CHART PLACEHOLDER */
-.chart-bar{display:flex;align-items:flex-end;gap:4px;height:120px;padding:10px 0}
-.bar{flex:1;background:linear-gradient(to top,var(--primary),var(--secondary));border-radius:4px 4px 0 0;min-height:4px;transition:.5s}
 </style>
 </head>
 <body>
 
-<div class="hamburger" onclick="toggleSidebar()" id="hamburger">
-  <span></span><span></span><span></span>
-</div>
-
-<div class="app">
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <div style="font-size:36px">🏪</div>
-    <h2>Luy AI</h2>
-    <span>Smart Business App</span>
-  </div>
-  <nav style="flex:1;padding:10px 0">
-    <div class="nav-item active" onclick="showPage('dashboard')"><span class="icon">🏠</span>Dashboard</div>
-    <div class="nav-item" onclick="showPage('ai-seller')"><span class="icon">🤖</span>AI Seller</div>
-    <div class="nav-item" onclick="showPage('products')"><span class="icon">📦</span>Products & Stock</div>
-    <div class="nav-item" onclick="showPage('orders')"><span class="icon">🛒</span>Orders</div>
-    <div class="nav-item" onclick="showPage('invoices')"><span class="icon">🧾</span>Invoices</div>
-    <div class="nav-item" onclick="showPage('customers')"><span class="icon">👥</span>Customers</div>
-    <div class="nav-item" onclick="showPage('profit')"><span class="icon">💰</span>Profit</div>
-    <div class="nav-item" onclick="showPage('marketing')"><span class="icon">📣</span>Marketing</div>
-    <div class="nav-item" onclick="showPage('freelancer')"><span class="icon">💻</span>Freelancer</div>
-    <div class="nav-item" onclick="showPage('reports')"><span class="icon">📈</span>Reports</div>
-  </nav>
-  <div style="padding:16px;border-top:1px solid rgba(255,255,255,.1);font-size:11px;color:rgba(255,255,255,.4);text-align:center">
-    Luy AI v1.0 💰<br>VT Studio 🇰🇭
-  </div>
-</div>
-
-<!-- MAIN -->
-<div class="main" id="main">
-
-<!-- ── DASHBOARD ───────────────────────────────────────────────── -->
-<div class="page active" id="page-dashboard">
-  <div class="page-title">🏠 Dashboard</div>
-  <div class="stats-grid" id="stats-grid">
-    <div class="loading"><div class="spinner"></div>Loading...</div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div class="card">
-      <div class="card-header"><span class="card-title">🛒 Orders ថ្មីៗ</span></div>
-      <div id="recent-orders"><div class="loading">Loading...</div></div>
+<!-- ── AUTH PAGE ───────────────────────────────────────────────────── -->
+<div id="auth-page">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="icon">💰</div>
+      <h1>Luy AI</h1>
+      <p>ជំនួយការអាជីវកម្មខ្មែរ Smart AI</p>
     </div>
-    <div class="card">
-      <div class="card-header"><span class="card-title">⚠️ Stock ជិតអស់</span></div>
-      <div id="low-stock"><div class="loading">Loading...</div></div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchTab('login')">🔑 Login</div>
+      <div class="auth-tab" onclick="switchTab('register')">📝 Register</div>
+    </div>
+    <div id="auth-error" class="auth-error"></div>
+
+    <!-- Login Form -->
+    <div id="login-form">
+      <input class="auth-input" id="l-email" type="email" placeholder="📧 Email">
+      <input class="auth-input" id="l-pass" type="password" placeholder="🔒 Password">
+      <button class="auth-btn" onclick="doLogin()">🚀 Login</button>
+    </div>
+
+    <!-- Register Form -->
+    <div id="register-form" style="display:none">
+      <input class="auth-input" id="r-name" placeholder="👤 ឈ្មោះ">
+      <input class="auth-input" id="r-shop" placeholder="🏪 ឈ្មោះហាង">
+      <input class="auth-input" id="r-email" type="email" placeholder="📧 Email">
+      <input class="auth-input" id="r-pass" type="password" placeholder="🔒 Password (min 6)">
+      <button class="auth-btn" onclick="doRegister()">✅ Create Account</button>
     </div>
   </div>
 </div>
 
-<!-- ── AI SELLER ───────────────────────────────────────────────── -->
-<div class="page" id="page-ai-seller">
-  <div class="page-title">🤖 AI Seller</div>
-  <div class="card">
-    <div class="card-header"><span class="card-title">Generate AI Content</span></div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>ឈ្មោះផលិតផល</label>
-        <input class="form-control" id="ai-product" placeholder="ឧ: ស្បែកជើង Nike">
+<!-- ── APP PAGE ─────────────────────────────────────────────────────── -->
+<div id="app-page">
+  <div class="hamburger" onclick="toggleSidebar()">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">💰</div>
+        <h2>Luy AI</h2>
+        <div class="shop-name" id="shop-name-display">ហាងរបស់ខ្ញុំ</div>
       </div>
-      <div class="form-group">
-        <label>តម្លៃ (រៀល/$)</label>
-        <input class="form-control" id="ai-price" placeholder="ឧ: 45,000">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Info បន្ថែម</label>
-      <textarea class="form-control" id="ai-extra" rows="2" placeholder="Size, Color, Brand..."></textarea>
-    </div>
-    <div class="form-group">
-      <label>រូបផលិតផល (optional)</label>
-      <div class="upload-area" onclick="document.getElementById('ai-image').click()">
-        📸 Click ដើម្បី Upload រូប
-        <input type="file" id="ai-image" accept="image/*" style="display:none" onchange="previewImg(this,'ai-preview')">
-        <br><img id="ai-preview" class="preview-img" style="display:none">
+      <nav style="flex:1;padding:8px 0">
+        <div class="nav-item active" onclick="showPage('dashboard')"><span class="icon">🏠</span>Dashboard</div>
+        <div class="nav-item" onclick="showPage('ai-seller')"><span class="icon">🤖</span>AI Seller</div>
+        <div class="nav-item" onclick="showPage('products')"><span class="icon">📦</span>Products & Stock</div>
+        <div class="nav-item" onclick="showPage('orders')"><span class="icon">🛒</span>Orders</div>
+        <div class="nav-item" onclick="showPage('invoices')"><span class="icon">🧾</span>Invoices</div>
+        <div class="nav-item" onclick="showPage('customers')"><span class="icon">👥</span>Customers</div>
+        <div class="nav-item" onclick="showPage('profit')"><span class="icon">💰</span>Profit</div>
+        <div class="nav-item" onclick="showPage('marketing')"><span class="icon">📣</span>Marketing</div>
+        <div class="nav-item" onclick="showPage('freelancer')"><span class="icon">💻</span>Freelancer</div>
+        <div class="nav-item" onclick="showPage('reports')"><span class="icon">📈</span>Reports</div>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="user-info">
+          <div class="user-avatar" id="user-avatar">K</div>
+          <div><div class="user-name" id="user-name-display">Keo</div>
+          <div class="user-email" id="user-email-display">user@email.com</div></div>
+        </div>
+        <button class="btn-logout" onclick="doLogout()">🚪 Logout</button>
       </div>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="generateAI('caption')">✍️ Caption + Reply</button>
-      <button class="btn btn-success" onclick="generateAI('description')">📝 Description</button>
-      <button class="btn btn-warning" onclick="generateAI('ads')">📣 Ads Script</button>
-    </div>
-    <div id="ai-loading" style="display:none" class="loading"><div class="spinner"></div>AI កំពុង Generate...</div>
-    <div id="ai-result" class="ai-result" style="display:none"></div>
-  </div>
 
-  <div class="card">
-    <div class="card-header"><span class="card-title">💬 AI Reply អតិថិជន</span></div>
-    <div class="form-group">
-      <label>សំណួររបស់អតិថិជន</label>
-      <input class="form-control" id="customer-msg" placeholder="ឧ: តម្លៃប៉ុន្មាន? មានពណ៌ Exchange ទេ?">
-    </div>
-    <button class="btn btn-primary" onclick="generateReply()">💬 Generate Reply</button>
-    <div id="reply-result" class="ai-result" style="display:none;margin-top:12px"></div>
-  </div>
-</div>
+    <!-- MAIN -->
+    <div class="main">
 
-<!-- ── PRODUCTS ─────────────────────────────────────────────────── -->
-<div class="page" id="page-products">
-  <div class="page-title">📦 Products & Stock
-    <button class="btn btn-primary btn-sm" onclick="openModal('modal-product')">+ Add Product</button>
-  </div>
-  <div class="card">
-    <input class="form-control" placeholder="🔍 ស្វែងរកផលិតផល..." oninput="filterTable(this,'products-table')" style="margin-bottom:14px">
-    <div class="table-wrap">
-      <table id="products-table">
-        <thead><tr><th>រូប</th><th>ឈ្មោះ</th><th>ថ្លៃទិញ</th><th>ថ្លៃលក់</th><th>Stock</th><th>Action</th></tr></thead>
-        <tbody id="products-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ── ORDERS ───────────────────────────────────────────────────── -->
-<div class="page" id="page-orders">
-  <div class="page-title">🛒 Orders
-    <button class="btn btn-primary btn-sm" onclick="openModal('modal-order')">+ New Order</button>
-  </div>
-  <div class="card">
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>#</th><th>អតិថិជន</th><th>Total</th><th>ចំណេញ</th><th>Status</th><th>ថ្ងៃ</th><th>Action</th></tr></thead>
-        <tbody id="orders-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ── INVOICES ─────────────────────────────────────────────────── -->
-<div class="page" id="page-invoices">
-  <div class="page-title">🧾 Invoices
-    <button class="btn btn-primary btn-sm" onclick="openModal('modal-invoice')">+ New Invoice</button>
-  </div>
-  <div class="card">
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Invoice#</th><th>អតិថិជន</th><th>Total</th><th>Status</th><th>Due Date</th><th>Action</th></tr></thead>
-        <tbody id="invoices-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ── CUSTOMERS ────────────────────────────────────────────────── -->
-<div class="page" id="page-customers">
-  <div class="page-title">👥 Customers
-    <button class="btn btn-primary btn-sm" onclick="openModal('modal-customer')">+ Add Customer</button>
-  </div>
-  <div class="card">
-    <input class="form-control" placeholder="🔍 ស្វែងរកអតិថិជន..." oninput="filterTable(this,'customers-table')" style="margin-bottom:14px">
-    <div class="table-wrap">
-      <table id="customers-table">
-        <thead><tr><th>ឈ្មោះ</th><th>Phone</th><th>Orders</th><th>Total Spent</th><th>Last Order</th><th>Action</th></tr></thead>
-        <tbody id="customers-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ── PROFIT ───────────────────────────────────────────────────── -->
-<div class="page" id="page-profit">
-  <div class="page-title">💰 Profit & Expenses</div>
-  <div class="stats-grid" id="profit-stats"></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">💸 Expenses</span>
-        <button class="btn btn-danger btn-sm" onclick="openModal('modal-expense')">+ Add</button>
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="topbar">
+          <div class="page-title">🏠 Dashboard</div>
+          <div class="topbar-actions">
+            <button class="dark-toggle" onclick="toggleDark()" title="Dark Mode">🌙</button>
+          </div>
+        </div>
+        <div id="notif-area"></div>
+        <div class="stats-grid" id="stats-grid"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card">
+            <div class="card-header"><span class="card-title">📊 Sales Chart (30 days)</span></div>
+            <div class="chart-container"><canvas id="sales-chart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">🛒 Orders ថ្មីៗ</span></div>
+            <div id="recent-orders"><div class="loading">Loading...</div></div>
+          </div>
+        </div>
       </div>
-      <div class="table-wrap">
-        <table><thead><tr><th>Category</th><th>Amount</th><th>Note</th><th>Date</th></tr></thead>
-          <tbody id="expenses-body"></tbody></table>
+
+      <!-- AI SELLER -->
+      <div class="page" id="page-ai-seller">
+        <div class="topbar"><div class="page-title">🤖 AI Seller</div></div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">✨ Generate AI Content</span></div>
+          <div class="form-row">
+            <div class="form-group"><label>ឈ្មោះផលិតផល</label><input class="form-control" id="ai-product" placeholder="ឧ: ស្បែកជើង Nike"></div>
+            <div class="form-group"><label>តម្លៃ</label><input class="form-control" id="ai-price" placeholder="ឧ: 45,000"></div>
+          </div>
+          <div class="form-group"><label>Info បន្ថែម</label><textarea class="form-control" id="ai-extra" rows="2" placeholder="Size, Color, Brand..."></textarea></div>
+          <div class="form-group">
+            <label>រូបផលិតផល</label>
+            <div class="upload-area" onclick="document.getElementById('ai-image').click()">
+              📸 Click Upload រូប
+              <input type="file" id="ai-image" accept="image/*" style="display:none" onchange="previewImg(this,'ai-preview')">
+              <br><img id="ai-preview" class="preview-img" style="display:none">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="generateAI('caption')">✍️ Caption + Reply</button>
+            <button class="btn btn-success" onclick="generateAI('description')">📝 Description</button>
+            <button class="btn btn-warning" onclick="generateAI('ads')">📣 Ads Script</button>
+          </div>
+          <div id="ai-loading" style="display:none" class="loading"><div class="spinner"></div>AI generating...</div>
+          <div id="ai-result" class="ai-result"></div>
+          <button id="ai-copy-btn" style="display:none;margin-top:8px" class="btn btn-outline btn-sm" onclick="copyAI()">📋 Copy</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">💬 AI Reply អតិថិជន</span></div>
+          <div class="form-group"><label>សំណួរអតិថិជន</label><input class="form-control" id="customer-msg" placeholder="ឧ: តម្លៃប៉ុន្មាន?"></div>
+          <button class="btn btn-primary" onclick="generateReply()">💬 Generate Reply</button>
+          <div id="reply-result" class="ai-result"></div>
+        </div>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-header"><span class="card-title">📊 Profit Chart (30 days)</span></div>
-      <div class="chart-bar" id="profit-chart"></div>
-    </div>
-  </div>
-</div>
 
-<!-- ── MARKETING ────────────────────────────────────────────────── -->
-<div class="page" id="page-marketing">
-  <div class="page-title">📣 Marketing</div>
-  <div class="card">
-    <div class="card-header"><span class="card-title">🎨 Generate Ads Campaign</span></div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Campaign Name</label>
-        <input class="form-control" id="camp-name" placeholder="ឧ: Sale ១១.១១">
+      <!-- PRODUCTS -->
+      <div class="page" id="page-products">
+        <div class="topbar">
+          <div class="page-title">📦 Products & Stock</div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('modal-product')">+ Add Product</button>
+        </div>
+        <div class="card">
+          <input class="form-control" placeholder="🔍 Search..." oninput="filterTable(this,'products-table')" style="margin-bottom:14px">
+          <div class="table-wrap">
+            <table id="products-table">
+              <thead><tr><th>រូប</th><th>ឈ្មោះ</th><th>Cost</th><th>Price</th><th>Profit</th><th>Stock</th><th>Action</th></tr></thead>
+              <tbody id="products-body"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Budget ($)</label>
-        <input class="form-control" id="camp-budget" type="number" placeholder="ឧ: 50">
+
+      <!-- ORDERS -->
+      <div class="page" id="page-orders">
+        <div class="topbar">
+          <div class="page-title">🛒 Orders</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm" onclick="exportCSV()">📤 Export CSV</button>
+            <button class="btn btn-primary btn-sm" onclick="openModal('modal-order')">+ New Order</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>អតិថិជន</th><th>Total</th><th>Profit</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+              <tbody id="orders-body"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <label>Products / Promotion</label>
-      <textarea class="form-control" id="camp-products" rows="3" placeholder="ឧ: ស្បែកជើង Nike ចុះ 30%, Bag ថ្មី..."></textarea>
-    </div>
-    <div class="form-group">
-      <label>Target Audience</label>
-      <input class="form-control" id="camp-target" placeholder="ឧ: អ្នកស្រឡាញ់ fashion ខ្មែរ អាយុ 18-35">
-    </div>
-    <button class="btn btn-primary" onclick="generateCampaign()">🚀 Generate Campaign</button>
-    <div id="camp-loading" style="display:none" class="loading"><div class="spinner"></div>Generating...</div>
-    <div id="camp-result" class="ai-result" style="display:none"></div>
+
+      <!-- INVOICES -->
+      <div class="page" id="page-invoices">
+        <div class="topbar">
+          <div class="page-title">🧾 Invoices</div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('modal-invoice')">+ New Invoice</button>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Invoice#</th><th>អតិថិជន</th><th>Total</th><th>Status</th><th>Due</th><th>Action</th></tr></thead>
+              <tbody id="invoices-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUSTOMERS -->
+      <div class="page" id="page-customers">
+        <div class="topbar">
+          <div class="page-title">👥 Customers</div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('modal-customer')">+ Add</button>
+        </div>
+        <div class="card">
+          <input class="form-control" placeholder="🔍 Search..." oninput="filterTable(this,'customers-table')" style="margin-bottom:14px">
+          <div class="table-wrap">
+            <table id="customers-table">
+              <thead><tr><th>ឈ្មោះ</th><th>Phone</th><th>Orders</th><th>Total Spent</th><th>Last Order</th><th>Action</th></tr></thead>
+              <tbody id="customers-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFIT -->
+      <div class="page" id="page-profit">
+        <div class="topbar"><div class="page-title">💰 Profit & Expenses</div></div>
+        <div class="stats-grid" id="profit-stats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card">
+            <div class="card-header"><span class="card-title">💸 Expenses</span><button class="btn btn-danger btn-sm" onclick="openModal('modal-expense')">+ Add</button></div>
+            <div class="table-wrap"><table><thead><tr><th>Category</th><th>Amount</th><th>Note</th><th>Date</th></tr></thead><tbody id="expenses-body"></tbody></table></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">📊 Profit Chart</span></div>
+            <div class="chart-container"><canvas id="profit-chart"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARKETING -->
+      <div class="page" id="page-marketing">
+        <div class="topbar"><div class="page-title">📣 Marketing</div></div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">🎨 AI Ads Campaign</span></div>
+          <div class="form-row">
+            <div class="form-group"><label>Campaign Name</label><input class="form-control" id="camp-name" placeholder="ឧ: Sale ១១.១១"></div>
+            <div class="form-group"><label>Budget ($)</label><input class="form-control" id="camp-budget" type="number" placeholder="50"></div>
+          </div>
+          <div class="form-group"><label>Products / Promotion</label><textarea class="form-control" id="camp-products" rows="3" placeholder="ឧ: ស្បែកជើង Nike ចុះ 30%..."></textarea></div>
+          <div class="form-group"><label>Target Audience</label><input class="form-control" id="camp-target" placeholder="ឧ: អ្នកស្រឡាញ់ fashion ខ្មែរ 18-35"></div>
+          <button class="btn btn-primary" onclick="generateCampaign()">🚀 Generate Campaign</button>
+          <div id="camp-loading" style="display:none" class="loading"><div class="spinner"></div>Generating...</div>
+          <div id="camp-result" class="ai-result"></div>
+        </div>
+      </div>
+
+      <!-- FREELANCER -->
+      <div class="page" id="page-freelancer">
+        <div class="topbar"><div class="page-title">💻 Freelancer</div><button class="btn btn-primary btn-sm" onclick="openModal('modal-project')">+ Project</button></div>
+        <div class="stats-grid" id="freelancer-stats"></div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Client</th><th>Project</th><th>Price</th><th>Profit</th><th>Status</th><th>Deadline</th></tr></thead>
+              <tbody id="projects-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="page" id="page-reports">
+        <div class="topbar"><div class="page-title">📈 Reports</div></div>
+        <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+          <button class="btn btn-outline btn-sm" onclick="loadReports('today')">📅 Today</button>
+          <button class="btn btn-outline btn-sm" onclick="loadReports('week')">📅 Week</button>
+          <button class="btn btn-outline btn-sm" onclick="loadReports('month')">📅 Month</button>
+          <button class="btn btn-outline btn-sm" onclick="loadReports('all')">📅 All Time</button>
+        </div>
+        <div class="stats-grid" id="report-stats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div class="card"><div class="card-header"><span class="card-title">📈 Sales Trend</span></div><div class="chart-container"><canvas id="report-chart"></canvas></div></div>
+          <div class="card"><div class="card-header"><span class="card-title">🤖 AI Analysis</span><button class="btn btn-primary btn-sm" onclick="getAIAnalysis()">Analyze</button></div><div id="ai-analysis" class="ai-result"></div></div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
   </div>
 </div>
 
-<!-- ── FREELANCER ───────────────────────────────────────────────── -->
-<div class="page" id="page-freelancer">
-  <div class="page-title">💻 Freelancer Mode
-    <button class="btn btn-primary btn-sm" onclick="openModal('modal-project')">+ New Project</button>
-  </div>
-  <div class="stats-grid" id="freelancer-stats"></div>
-  <div class="card">
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Client</th><th>Project</th><th>Price</th><th>Cost</th><th>Profit</th><th>Status</th><th>Deadline</th><th>Action</th></tr></thead>
-        <tbody id="projects-body"><tr><td colspan="8" class="loading">Loading...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-</div>
+<!-- PRINT INVOICE -->
+<div id="print-invoice"></div>
 
-<!-- ── REPORTS ──────────────────────────────────────────────────── -->
-<div class="page" id="page-reports">
-  <div class="page-title">📈 Reports</div>
-  <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-    <button class="btn btn-outline btn-sm" onclick="loadReports('today')">📅 Today</button>
-    <button class="btn btn-outline btn-sm" onclick="loadReports('week')">📅 This Week</button>
-    <button class="btn btn-outline btn-sm active" onclick="loadReports('month')">📅 This Month</button>
-    <button class="btn btn-outline btn-sm" onclick="loadReports('all')">📅 All Time</button>
-  </div>
-  <div class="stats-grid" id="report-stats"></div>
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">🤖 AI Business Analysis</span>
-      <button class="btn btn-primary btn-sm" onclick="getAIAnalysis()">Analyze</button>
-    </div>
-    <div id="ai-analysis" class="ai-result" style="display:none"></div>
-  </div>
-</div>
-
-</div><!-- /main -->
-</div><!-- /app -->
-
-<!-- ── MODALS ────────────────────────────────────────────────────────── -->
-
-<!-- Product Modal -->
+<!-- ── MODALS ───────────────────────────────────────────────────────── -->
+<!-- Product -->
 <div class="modal-overlay" id="modal-product">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">📦 Add Product</span>
-      <button class="modal-close" onclick="closeModal('modal-product')">✕</button>
-    </div>
-    <div class="form-group">
-      <label>ឈ្មោះផលិតផល *</label>
-      <input class="form-control" id="p-name" placeholder="ឈ្មោះ">
+    <div class="modal-header"><span class="modal-title">📦 Add Product</span><button class="modal-close" onclick="closeModal('modal-product')">✕</button></div>
+    <div class="form-group"><label>ឈ្មោះ *</label><input class="form-control" id="p-name" placeholder="ឈ្មោះ"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Cost (ថ្លៃទិញ)</label><input class="form-control" id="p-buy" type="number" placeholder="0"></div>
+      <div class="form-group"><label>Price (ថ្លៃលក់)</label><input class="form-control" id="p-sell" type="number" placeholder="0"></div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label>ថ្លៃទិញ (Cost) *</label>
-        <input class="form-control" id="p-buy" type="number" placeholder="0">
-      </div>
-      <div class="form-group">
-        <label>ថ្លៃលក់ (Price) *</label>
-        <input class="form-control" id="p-sell" type="number" placeholder="0">
-      </div>
+      <div class="form-group"><label>Stock</label><input class="form-control" id="p-stock" type="number" placeholder="0"></div>
+      <div class="form-group"><label>Category</label><input class="form-control" id="p-cat" placeholder="Category"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Stock ដំបូង</label>
-        <input class="form-control" id="p-stock" type="number" placeholder="0">
-      </div>
-      <div class="form-group">
-        <label>Category</label>
-        <input class="form-control" id="p-cat" placeholder="ឧ: ស្បែកជើង">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Description</label>
-      <textarea class="form-control" id="p-desc" rows="2"></textarea>
-    </div>
-    <div class="form-group">
-      <label>រូបផលិតផល</label>
-      <input type="file" id="p-image" accept="image/*" class="form-control">
-    </div>
-    <button class="btn btn-primary" onclick="saveProduct()" style="width:100%">💾 Save Product</button>
+    <div class="form-group"><label>Description</label><textarea class="form-control" id="p-desc" rows="2"></textarea></div>
+    <div class="form-group"><label>រូប</label><input type="file" id="p-image" accept="image/*" class="form-control"></div>
+    <button class="btn btn-primary" onclick="saveProduct()" style="width:100%">💾 Save</button>
   </div>
 </div>
 
-<!-- Order Modal -->
+<!-- Order -->
 <div class="modal-overlay" id="modal-order">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">🛒 New Order</span>
-      <button class="modal-close" onclick="closeModal('modal-order')">✕</button>
-    </div>
+    <div class="modal-header"><span class="modal-title">🛒 New Order</span><button class="modal-close" onclick="closeModal('modal-order')">✕</button></div>
     <div class="form-row">
-      <div class="form-group">
-        <label>ឈ្មោះអតិថិជន</label>
-        <input class="form-control" id="o-customer" placeholder="ឈ្មោះ">
-      </div>
-      <div class="form-group">
-        <label>Note</label>
-        <input class="form-control" id="o-note" placeholder="Note">
-      </div>
+      <div class="form-group"><label>Customer</label><input class="form-control" id="o-customer" placeholder="ឈ្មោះ"></div>
+      <div class="form-group"><label>Note</label><input class="form-control" id="o-note" placeholder="Note"></div>
     </div>
-    <div class="form-group">
-      <label>ជ្រើស Products</label>
-      <select class="form-control" id="o-product-select" onchange="addOrderItem()">
-        <option value="">-- ជ្រើសផលិតផល --</option>
-      </select>
+    <div class="form-group"><label>ជ្រើស Product</label>
+      <select class="form-control" id="o-product-select" onchange="addOrderItem()"><option value="">-- ជ្រើស --</option></select>
     </div>
-    <div id="order-items" style="margin:10px 0;min-height:40px;background:#f8f9fa;border-radius:8px;padding:8px"></div>
-    <div style="font-weight:700;font-size:16px;text-align:right" id="order-total">Total: $0</div>
+    <div id="order-items" style="min-height:40px;background:var(--hover);border-radius:8px;padding:8px;margin:8px 0"></div>
+    <div style="font-weight:800;font-size:15px;text-align:right" id="order-total">Total: $0</div>
     <button class="btn btn-success" onclick="saveOrder()" style="width:100%;margin-top:12px">✅ Confirm Order</button>
   </div>
 </div>
 
-<!-- Invoice Modal -->
+<!-- Invoice -->
 <div class="modal-overlay" id="modal-invoice">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">🧾 New Invoice</span>
-      <button class="modal-close" onclick="closeModal('modal-invoice')">✕</button>
+    <div class="modal-header"><span class="modal-title">🧾 New Invoice</span><button class="modal-close" onclick="closeModal('modal-invoice')">✕</button></div>
+    <div class="form-row">
+      <div class="form-group"><label>Customer Name *</label><input class="form-control" id="inv-name" placeholder="ឈ្មោះ"></div>
+      <div class="form-group"><label>Phone</label><input class="form-control" id="inv-phone" placeholder="Phone"></div>
+    </div>
+    <div class="form-group"><label>Items (Name,Qty,Price — one per line)</label>
+      <textarea class="form-control" id="inv-items-text" rows="5" placeholder="ស្បែកជើង Nike,2,45&#10;Bag Louis,1,25"></textarea>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label>ឈ្មោះអតិថិជន *</label>
-        <input class="form-control" id="inv-name" placeholder="ឈ្មោះ">
-      </div>
-      <div class="form-group">
-        <label>Phone</label>
-        <input class="form-control" id="inv-phone" placeholder="Phone">
-      </div>
+      <div class="form-group"><label>Discount ($)</label><input class="form-control" id="inv-discount" type="number" value="0"></div>
+      <div class="form-group"><label>Due Date</label><input class="form-control" id="inv-due" type="date"></div>
     </div>
-    <div id="inv-items">
-      <div class="form-group">
-        <label>Items (Item,Qty,Price | ...)</label>
-        <textarea class="form-control" id="inv-items-text" rows="4" placeholder="ឧ: ស្បែកជើង Nike,2,45&#10;Bag,1,25"></textarea>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Discount ($)</label>
-        <input class="form-control" id="inv-discount" type="number" value="0">
-      </div>
-      <div class="form-group">
-        <label>Due Date</label>
-        <input class="form-control" id="inv-due" type="date">
-      </div>
-    </div>
-    <button class="btn btn-primary" onclick="saveInvoice()" style="width:100%">🧾 Create Invoice</button>
+    <button class="btn btn-primary" onclick="saveInvoice()" style="width:100%">🧾 Create</button>
   </div>
 </div>
 
-<!-- Customer Modal -->
+<!-- Customer -->
 <div class="modal-overlay" id="modal-customer">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">👤 Add Customer</span>
-      <button class="modal-close" onclick="closeModal('modal-customer')">✕</button>
-    </div>
+    <div class="modal-header"><span class="modal-title">👤 Add Customer</span><button class="modal-close" onclick="closeModal('modal-customer')">✕</button></div>
     <div class="form-group"><label>ឈ្មោះ *</label><input class="form-control" id="c-name" placeholder="ឈ្មោះ"></div>
     <div class="form-group"><label>Phone</label><input class="form-control" id="c-phone" placeholder="Phone"></div>
     <div class="form-group"><label>Address</label><input class="form-control" id="c-address" placeholder="Address"></div>
@@ -484,19 +510,14 @@ tr:hover td{background:#fafafa}
   </div>
 </div>
 
-<!-- Expense Modal -->
+<!-- Expense -->
 <div class="modal-overlay" id="modal-expense">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">💸 Add Expense</span>
-      <button class="modal-close" onclick="closeModal('modal-expense')">✕</button>
-    </div>
-    <div class="form-group">
-      <label>Category</label>
+    <div class="modal-header"><span class="modal-title">💸 Add Expense</span><button class="modal-close" onclick="closeModal('modal-expense')">✕</button></div>
+    <div class="form-group"><label>Category</label>
       <select class="form-control" id="exp-cat">
-        <option>ថ្លៃជួល (Rent)</option><option>អគ្គីសនី/ទឹក</option>
-        <option>ដឹកជញ្ជូន</option><option>ទំនិញ (Stock)</option>
-        <option>Marketing</option><option>ប្រាក់ខែ</option><option>ផ្សេងៗ</option>
+        <option>ថ្លៃជួល</option><option>អគ្គីសនី/ទឹក</option><option>ដឹកជញ្ជូន</option>
+        <option>Stock/ទំនិញ</option><option>Marketing</option><option>ប្រាក់ខែ</option><option>ផ្សេងៗ</option>
       </select>
     </div>
     <div class="form-row">
@@ -504,19 +525,16 @@ tr:hover td{background:#fafafa}
       <div class="form-group"><label>Date</label><input class="form-control" id="exp-date" type="date"></div>
     </div>
     <div class="form-group"><label>Note</label><input class="form-control" id="exp-note" placeholder="Note"></div>
-    <button class="btn btn-danger" onclick="saveExpense()" style="width:100%">💾 Save Expense</button>
+    <button class="btn btn-danger" onclick="saveExpense()" style="width:100%">💾 Save</button>
   </div>
 </div>
 
-<!-- Project Modal -->
+<!-- Project -->
 <div class="modal-overlay" id="modal-project">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">💻 New Project</span>
-      <button class="modal-close" onclick="closeModal('modal-project')">✕</button>
-    </div>
+    <div class="modal-header"><span class="modal-title">💻 New Project</span><button class="modal-close" onclick="closeModal('modal-project')">✕</button></div>
     <div class="form-row">
-      <div class="form-group"><label>Client Name *</label><input class="form-control" id="proj-client" placeholder="Client"></div>
+      <div class="form-group"><label>Client *</label><input class="form-control" id="proj-client" placeholder="Client"></div>
       <div class="form-group"><label>Phone</label><input class="form-control" id="proj-phone" placeholder="Phone"></div>
     </div>
     <div class="form-group"><label>Project Title *</label><input class="form-control" id="proj-title" placeholder="Title"></div>
@@ -526,383 +544,401 @@ tr:hover td{background:#fafafa}
       <div class="form-group"><label>Cost ($)</label><input class="form-control" id="proj-cost" type="number" placeholder="0"></div>
     </div>
     <div class="form-group"><label>Deadline</label><input class="form-control" id="proj-deadline" type="date"></div>
-    <button class="btn btn-primary" onclick="saveProject()" style="width:100%">💾 Save Project</button>
+    <button class="btn btn-primary" onclick="saveProject()" style="width:100%">💾 Save</button>
   </div>
 </div>
 
 <script>
-const API = '';
-let currentReport = { period:'month' };
-let orderItems = [];
-let allProducts = [];
+const API=''; let TOKEN=localStorage.getItem('luy_token')||'';
+let currentReport={period:'month'}, orderItems=[], allProducts=[], salesChartInst=null, profitChartInst=null, reportChartInst=null;
 
-// ── NAV ────────────────────────────────────────────────────────────
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+// ── AUTH ────────────────────────────────────────────────────────────
+function switchTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('login-form').style.display=tab==='login'?'block':'none';
+  document.getElementById('register-form').style.display=tab==='register'?'block':'none';
+  document.getElementById('auth-error').style.display='none';
+}
+
+async function doLogin(){
+  const email=document.getElementById('l-email').value, pass=document.getElementById('l-pass').value;
+  const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})}).then(r=>r.json());
+  if(r.error){showAuthError(r.error);return;}
+  TOKEN=r.token; localStorage.setItem('luy_token',TOKEN); initApp(r.user);
+}
+
+async function doRegister(){
+  const name=document.getElementById('r-name').value, shop=document.getElementById('r-shop').value;
+  const email=document.getElementById('r-email').value, pass=document.getElementById('r-pass').value;
+  if(!name||!email||!pass){showAuthError('Fill all fields!');return;}
+  const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password:pass,shop_name:shop})}).then(r=>r.json());
+  if(r.error){showAuthError(r.error);return;}
+  TOKEN=r.token; localStorage.setItem('luy_token',TOKEN); initApp(r.user);
+}
+
+function showAuthError(msg){const e=document.getElementById('auth-error');e.textContent='❌ '+msg;e.style.display='block';}
+
+function doLogout(){localStorage.removeItem('luy_token');TOKEN='';document.getElementById('app-page').style.display='none';document.getElementById('auth-page').style.display='flex';}
+
+function initApp(user){
+  document.getElementById('auth-page').style.display='none';
+  document.getElementById('app-page').style.display='block';
+  document.getElementById('user-name-display').textContent=user.name||'User';
+  document.getElementById('user-email-display').textContent=user.email||'';
+  document.getElementById('shop-name-display').textContent=user.shop_name||'ហាងរបស់ខ្ញុំ';
+  document.getElementById('user-avatar').textContent=(user.name||'U')[0].toUpperCase();
+  loadDashboard();
+}
+
+function headers(){return{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'};}
+function hdr(){return{Authorization:'Bearer '+TOKEN};}
+
+// Check existing token
+if(TOKEN){fetch('/api/auth/me',{headers:hdr()}).then(r=>r.json()).then(u=>{if(u.id)initApp(u);else doLogout();}).catch(doLogout);}
+
+// ── NAV ─────────────────────────────────────────────────────────────
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
-  event && event.currentTarget && event.currentTarget.classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => {
-    if(n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+name+"'")) n.classList.add('active');
-  });
-  if(name==='dashboard') loadDashboard();
-  if(name==='products') loadProducts();
-  if(name==='orders') loadOrders();
-  if(name==='invoices') loadInvoices();
-  if(name==='customers') loadCustomers();
-  if(name==='profit') loadProfit();
-  if(name==='freelancer') loadProjects();
-  if(name==='reports') loadReports('month');
-  closeSidebar();
-}
-
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-}
-function closeSidebar() {
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.getAttribute('onclick')?.includes("'"+name+"'")));
+  const loaders={dashboard:loadDashboard,products:loadProducts,orders:loadOrders,invoices:loadInvoices,customers:loadCustomers,profit:loadProfit,freelancer:loadProjects,reports:()=>loadReports('month')};
+  if(loaders[name]) loaders[name]();
   document.getElementById('sidebar').classList.remove('open');
 }
 
-// ── MODALS ─────────────────────────────────────────────────────────
-function openModal(id) { document.getElementById(id).classList.add('show') }
-function closeModal(id) { document.getElementById(id).classList.remove('show') }
-document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('show') }));
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
 
-// ── FORMAT ─────────────────────────────────────────────────────────
-function fmt(n) { return '$'+(+n||0).toFixed(2) }
-function fmtDate(s) { return s ? s.slice(0,10) : '-' }
+// ── DARK MODE ────────────────────────────────────────────────────────
+function toggleDark(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme',isDark?'light':'dark');
+  localStorage.setItem('luy_theme',isDark?'light':'dark');
+}
+const savedTheme=localStorage.getItem('luy_theme');
+if(savedTheme) document.documentElement.setAttribute('data-theme',savedTheme);
 
-// ── DASHBOARD ──────────────────────────────────────────────────────
-async function loadDashboard() {
-  const d = await fetch('/api/dashboard').then(r=>r.json());
-  document.getElementById('stats-grid').innerHTML = `
-    <div class="stat-card" style="border-color:#6c5ce7"><span class="ico">💰</span><div class="val">${fmt(d.todaySales)}</div><div class="lbl">ថ្ងៃនេះ Sales</div></div>
-    <div class="stat-card" style="border-color:#00b894"><span class="ico">📈</span><div class="val">${fmt(d.monthSales)}</div><div class="lbl">ខែនេះ Sales</div></div>
-    <div class="stat-card" style="border-color:#00cec9"><span class="ico">🛒</span><div class="val">${d.totalOrders}</div><div class="lbl">Orders សរុប</div></div>
-    <div class="stat-card" style="border-color:#fdcb6e"><span class="ico">👥</span><div class="val">${d.totalCustomers}</div><div class="lbl">Customers</div></div>
-    <div class="stat-card" style="border-color:#e17055"><span class="ico">📦</span><div class="val">${d.totalProducts}</div><div class="lbl">Products</div></div>
-    <div class="stat-card" style="border-color:#d63031"><span class="ico">⚠️</span><div class="val">${d.lowStock}</div><div class="lbl">Low Stock</div></div>
-    <div class="stat-card" style="border-color:#a29bfe"><span class="ico">🧾</span><div class="val">${d.unpaidInv}</div><div class="lbl">Unpaid Invoice</div></div>
-    <div class="stat-card" style="border-color:#55efc4"><span class="ico">💎</span><div class="val">${fmt(d.totalProfit)}</div><div class="lbl">Total Profit</div></div>
+// ── MODALS ───────────────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');}));
+
+// ── FORMAT ───────────────────────────────────────────────────────────
+const fmt=n=>'$'+(+n||0).toFixed(2);
+const fmtDate=s=>s?String(s).slice(0,10):'-';
+
+// ── CHARTS ───────────────────────────────────────────────────────────
+function drawChart(canvasId, labels, data, label, color, existingInst){
+  const ctx=document.getElementById(canvasId)?.getContext('2d');
+  if(!ctx) return null;
+  if(existingInst) existingInst.destroy();
+  return new Chart(ctx,{type:'line',data:{labels,datasets:[{label,data,borderColor:color,backgroundColor:color+'22',fill:true,tension:.4,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}}});
+}
+
+// ── DASHBOARD ────────────────────────────────────────────────────────
+async function loadDashboard(){
+  const d=await fetch('/api/dashboard',{headers:hdr()}).then(r=>r.json());
+  // Notifications
+  let notifs='';
+  if(d.lowStock>0) notifs+=`<div class="notif-bar danger">⚠️ <strong>${d.lowStock} products</strong> Stock ជិតអស់! ចូល Products → Fill stock.</div>`;
+  if(d.unpaidInv>0) notifs+=`<div class="notif-bar">🧾 <strong>${d.unpaidInv} Invoices</strong> មិនទាន់ paid!</div>`;
+  document.getElementById('notif-area').innerHTML=notifs;
+
+  document.getElementById('stats-grid').innerHTML=`
+    <div class="stat-card" style="--accent:#6c5ce7"><span class="stat-ico">💰</span><div class="stat-val">${fmt(d.todaySales)}</div><div class="stat-lbl">ថ្ងៃនេះ Sales</div></div>
+    <div class="stat-card" style="--accent:#00b894"><span class="stat-ico">📈</span><div class="stat-val">${fmt(d.monthSales)}</div><div class="stat-lbl">ខែនេះ Sales</div></div>
+    <div class="stat-card" style="--accent:#00cec9"><span class="stat-ico">🛒</span><div class="stat-val">${d.totalOrders}</div><div class="stat-lbl">Orders សរុប</div></div>
+    <div class="stat-card" style="--accent:#fdcb6e"><span class="stat-ico">👥</span><div class="stat-val">${d.totalCustomers}</div><div class="stat-lbl">Customers</div></div>
+    <div class="stat-card" style="--accent:#e17055"><span class="stat-ico">📦</span><div class="stat-val">${d.totalProducts}</div><div class="stat-lbl">Products</div></div>
+    <div class="stat-card" style="--accent:#55efc4"><span class="stat-ico">💎</span><div class="stat-val">${fmt(d.totalProfit)}</div><div class="stat-lbl">Total Profit</div></div>
   `;
-  const ro = d.recentOrders.map(o=>`<tr><td>${o.customer_name}</td><td>${fmt(o.total)}</td><td><span class="badge badge-${o.status==='completed'?'success':o.status==='pending'?'warning':'danger'}">${o.status}</span></td></tr>`).join('');
-  document.getElementById('recent-orders').innerHTML = `<table><thead><tr><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>${ro||'<tr><td colspan=3>No orders</td></tr>'}</tbody></table>`;
-  document.getElementById('low-stock').innerHTML = d.lowStock > 0
-    ? '<div style="color:#d63031;padding:8px">⚠️ '+d.lowStock+' products ជិតអស់ Stock! ចូល Products ដើម្បីបំពេញ.</div>'
-    : '<div style="color:#00b894;padding:8px">✅ Stock ទាំងអស់ OK!</div>';
-}
-
-// ── AI SELLER ──────────────────────────────────────────────────────
-function previewImg(input, previewId) {
-  const f = input.files[0];
-  if(f) { const r = new FileReader(); r.onload=e=>{ const img=document.getElementById(previewId); img.src=e.target.result; img.style.display='block'; }; r.readAsDataURL(f); }
-}
-
-async function generateAI(type) {
-  const fd = new FormData();
-  fd.append('type', type);
-  fd.append('product_name', document.getElementById('ai-product').value);
-  fd.append('price', document.getElementById('ai-price').value);
-  fd.append('extra', document.getElementById('ai-extra').value);
-  const img = document.getElementById('ai-image').files[0];
-  if(img) fd.append('image', img);
-
-  document.getElementById('ai-loading').style.display='block';
-  document.getElementById('ai-result').style.display='none';
-
-  try {
-    const r = await fetch('/api/ai/generate', { method:'POST', body:fd }).then(r=>r.json());
-    document.getElementById('ai-result').textContent = r.result || r.error;
-    document.getElementById('ai-result').style.display='block';
-  } catch(e) {
-    document.getElementById('ai-result').textContent = '❌ Error: '+e.message;
-    document.getElementById('ai-result').style.display='block';
+  // Chart
+  if(d.dailyProfit?.length>0){
+    const labels=d.dailyProfit.map(x=>x.date?.toString().slice(5,10));
+    const vals=d.dailyProfit.map(x=>+x.sales||0);
+    salesChartInst=drawChart('sales-chart',labels,vals,'Sales','#6c5ce7',salesChartInst);
   }
+  const ro=d.recentOrders?.map(o=>`<tr><td>${o.customer_name}</td><td>${fmt(o.total)}</td><td><span class="badge badge-${o.status==='completed'?'success':o.status==='pending'?'warning':'danger'}">${o.status}</span></td></tr>`).join('');
+  document.getElementById('recent-orders').innerHTML=`<table><thead><tr><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>${ro||'<tr><td colspan=3 style="text-align:center;color:var(--sub)">No orders yet</td></tr>'}</tbody></table>`;
+}
+
+// ── AI ───────────────────────────────────────────────────────────────
+function previewImg(input,id){const f=input.files[0];if(f){const r=new FileReader();r.onload=e=>{const img=document.getElementById(id);img.src=e.target.result;img.style.display='block';};r.readAsDataURL(f);}}
+
+async function generateAI(type){
+  const fd=new FormData();
+  fd.append('type',type); fd.append('product_name',document.getElementById('ai-product').value);
+  fd.append('price',document.getElementById('ai-price').value); fd.append('extra',document.getElementById('ai-extra').value);
+  const img=document.getElementById('ai-image').files[0]; if(img) fd.append('image',img);
+  document.getElementById('ai-loading').style.display='block'; document.getElementById('ai-result').style.display='none';
+  const r=await fetch('/api/ai/generate',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd}).then(r=>r.json());
+  document.getElementById('ai-result').textContent=r.result||r.error; document.getElementById('ai-result').style.display='block';
+  document.getElementById('ai-copy-btn').style.display='inline-flex';
   document.getElementById('ai-loading').style.display='none';
 }
 
-async function generateReply() {
-  const msg = document.getElementById('customer-msg').value;
-  if(!msg) { alert('វាយ message ជាមុន!'); return; }
-  const fd = new FormData();
-  fd.append('type','reply'); fd.append('extra', msg);
-  fd.append('product_name', document.getElementById('ai-product').value||'');
-  const r = await fetch('/api/ai/generate',{method:'POST',body:fd}).then(r=>r.json());
-  const el = document.getElementById('reply-result');
-  el.textContent = r.result||r.error; el.style.display='block';
+async function generateReply(){
+  const msg=document.getElementById('customer-msg').value; if(!msg) return;
+  const fd=new FormData(); fd.append('type','reply'); fd.append('extra',msg);
+  fd.append('product_name',document.getElementById('ai-product').value||'');
+  const r=await fetch('/api/ai/generate',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd}).then(r=>r.json());
+  const el=document.getElementById('reply-result'); el.textContent=r.result||r.error; el.style.display='block';
 }
 
-// ── PRODUCTS ───────────────────────────────────────────────────────
-async function loadProducts() {
-  allProducts = await fetch('/api/products').then(r=>r.json());
-  const rows = allProducts.map(p=>`<tr>
-    <td>${p.image?`<img src="${p.image}" style="width:40px;height:40px;object-fit:cover;border-radius:6px">`:'📦'}</td>
-    <td><strong>${p.name}</strong><br><small style="color:#888">${p.category||''}</small></td>
+function copyAI(){navigator.clipboard.writeText(document.getElementById('ai-result').textContent).then(()=>alert('✅ Copied!'));}
+
+// ── PRODUCTS ─────────────────────────────────────────────────────────
+async function loadProducts(){
+  allProducts=await fetch('/api/products',{headers:hdr()}).then(r=>r.json());
+  const rows=allProducts.map(p=>`<tr>
+    <td>${p.image?`<img src="${p.image}" style="width:38px;height:38px;object-fit:cover;border-radius:6px">`:'📦'}</td>
+    <td><strong>${p.name}</strong><br><small style="color:var(--sub)">${p.category||''}</small></td>
     <td>${fmt(p.buy_price)}</td><td>${fmt(p.sell_price)}</td>
-    <td><span style="color:${p.stock<=5?'#d63031':'#00b894'};font-weight:700">${p.stock}</span></td>
+    <td class="profit-pos">${fmt(p.sell_price-p.buy_price)}</td>
+    <td><span style="color:${p.stock<=5?'var(--danger)':'var(--success)'};font-weight:700">${p.stock}</span></td>
     <td><button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">🗑</button></td>
   </tr>`).join('');
-  document.getElementById('products-body').innerHTML = rows||'<tr><td colspan="6" style="text-align:center;color:#888">No products yet</td></tr>';
-  // Update order select
-  const sel = document.getElementById('o-product-select');
-  sel.innerHTML = '<option value="">-- ជ្រើសផលិតផល --</option>' + allProducts.map(p=>`<option value="${p.id}" data-price="${p.sell_price}" data-buy="${p.buy_price}" data-name="${p.name}" data-stock="${p.stock}">${p.name} (${fmt(p.sell_price)}) [${p.stock}]</option>`).join('');
+  document.getElementById('products-body').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;color:var(--sub);padding:30px">No products yet</td></tr>';
+  const sel=document.getElementById('o-product-select');
+  sel.innerHTML='<option value="">-- ជ្រើស --</option>'+allProducts.map(p=>`<option value="${p.id}" data-price="${p.sell_price}" data-buy="${p.buy_price}" data-name="${p.name}" data-stock="${p.stock}">${p.name} (${fmt(p.sell_price)}) [${p.stock}]</option>`).join('');
 }
 
-async function saveProduct() {
-  const fd = new FormData();
-  fd.append('name', document.getElementById('p-name').value);
-  fd.append('buy_price', document.getElementById('p-buy').value);
-  fd.append('sell_price', document.getElementById('p-sell').value);
-  fd.append('stock', document.getElementById('p-stock').value);
-  fd.append('category', document.getElementById('p-cat').value);
-  fd.append('description', document.getElementById('p-desc').value);
-  const img = document.getElementById('p-image').files[0];
-  if(img) fd.append('image', img);
-  await fetch('/api/products',{method:'POST',body:fd});
+async function saveProduct(){
+  const fd=new FormData();
+  ['name','description','category'].forEach(k=>fd.append(k,document.getElementById(`p-${k[0]===n?'name':k.substring(0,1)}`+'').value||''));
+  fd.append('name',document.getElementById('p-name').value);
+  fd.append('description',document.getElementById('p-desc').value);
+  fd.append('buy_price',document.getElementById('p-buy').value);
+  fd.append('sell_price',document.getElementById('p-sell').value);
+  fd.append('stock',document.getElementById('p-stock').value);
+  fd.append('category',document.getElementById('p-cat').value);
+  const img=document.getElementById('p-image').files[0]; if(img) fd.append('image',img);
+  await fetch('/api/products',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd});
   closeModal('modal-product'); loadProducts();
 }
 
-async function deleteProduct(id) {
-  if(confirm('Delete product?')) { await fetch('/api/products/'+id,{method:'DELETE'}); loadProducts(); }
+async function deleteProduct(id){if(confirm('Delete?')){await fetch('/api/products/'+id,{method:'DELETE',headers:hdr()});loadProducts();}}
+
+// ── ORDERS ───────────────────────────────────────────────────────────
+function addOrderItem(){
+  const sel=document.getElementById('o-product-select'), opt=sel.selectedOptions[0]; if(!opt.value) return;
+  const ex=orderItems.find(i=>i.id===opt.value);
+  if(ex) ex.qty++; else orderItems.push({id:opt.value,name:opt.dataset.name,price:+opt.dataset.price,buy_price:+opt.dataset.buy,qty:1});
+  renderOrderItems(); sel.value='';
 }
 
-// ── ORDERS ─────────────────────────────────────────────────────────
-function addOrderItem() {
-  const sel = document.getElementById('o-product-select');
-  const opt = sel.selectedOptions[0];
-  if(!opt.value) return;
-  const existing = orderItems.find(i=>i.id===opt.value);
-  if(existing) { existing.qty++; }
-  else { orderItems.push({id:opt.value, name:opt.dataset.name, price:+opt.dataset.price, buy_price:+opt.dataset.buy, qty:1}); }
-  renderOrderItems();
-  sel.value='';
-}
-
-function renderOrderItems() {
-  const total = orderItems.reduce((s,i)=>s+i.price*i.qty,0);
-  document.getElementById('order-items').innerHTML = orderItems.map((item,idx)=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px;background:#fff;border-radius:6px;margin-bottom:4px">
+function renderOrderItems(){
+  const total=orderItems.reduce((s,i)=>s+i.price*i.qty,0);
+  document.getElementById('order-items').innerHTML=orderItems.map((item,idx)=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--card);border-radius:6px;margin-bottom:4px">
       <span>${item.name}</span>
       <div style="display:flex;align-items:center;gap:8px">
-        <button onclick="changeQty(${idx},-1)" class="btn btn-sm" style="padding:2px 8px">-</button>
-        <span>${item.qty}</span>
-        <button onclick="changeQty(${idx},1)" class="btn btn-sm" style="padding:2px 8px">+</button>
+        <button onclick="changeQty(${idx},-1)" style="width:24px;height:24px;border:1px solid var(--border);background:var(--hover);border-radius:4px;cursor:pointer">-</button>
+        <b>${item.qty}</b>
+        <button onclick="changeQty(${idx},1)" style="width:24px;height:24px;border:1px solid var(--border);background:var(--hover);border-radius:4px;cursor:pointer">+</button>
         <span>${fmt(item.price*item.qty)}</span>
-        <button onclick="removeItem(${idx})" class="btn btn-danger btn-sm" style="padding:2px 8px">✕</button>
+        <button onclick="removeItem(${idx})" style="color:var(--danger);background:none;border:none;cursor:pointer;font-size:16px">✕</button>
       </div>
     </div>`).join('');
-  document.getElementById('order-total').textContent = 'Total: '+fmt(total);
+  document.getElementById('order-total').textContent='Total: '+fmt(total);
 }
 
-function changeQty(idx,d) { orderItems[idx].qty=Math.max(1,orderItems[idx].qty+d); renderOrderItems(); }
-function removeItem(idx) { orderItems.splice(idx,1); renderOrderItems(); }
+function changeQty(idx,d){orderItems[idx].qty=Math.max(1,orderItems[idx].qty+d);renderOrderItems();}
+function removeItem(idx){orderItems.splice(idx,1);renderOrderItems();}
 
-async function saveOrder() {
-  if(!orderItems.length) { alert('Add products ជាមុន!'); return; }
-  const r = await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    customer_name: document.getElementById('o-customer').value||'Walk-in',
-    items: JSON.stringify(orderItems),
-    note: document.getElementById('o-note').value
-  })}).then(r=>r.json());
+async function saveOrder(){
+  if(!orderItems.length){alert('Add products!');return;}
+  const r=await fetch('/api/orders',{method:'POST',headers:headers(),body:JSON.stringify({customer_name:document.getElementById('o-customer').value||'Walk-in',items:JSON.stringify(orderItems),note:document.getElementById('o-note').value})}).then(r=>r.json());
   alert(`✅ Order saved!\nTotal: ${fmt(r.total)}\nProfit: ${fmt(r.profit)}`);
-  orderItems=[]; renderOrderItems();
-  closeModal('modal-order'); loadOrders();
+  orderItems=[]; renderOrderItems(); closeModal('modal-order'); loadOrders();
 }
 
-async function loadOrders() {
-  const data = await fetch('/api/orders').then(r=>r.json());
-  const rows = data.map((o,i)=>`<tr>
+async function loadOrders(){
+  const data=await fetch('/api/orders',{headers:hdr()}).then(r=>r.json());
+  const rows=data.map((o,i)=>`<tr>
     <td>${i+1}</td><td>${o.customer_name}</td><td>${fmt(o.total)}</td>
-    <td class="${o.profit>=0?'profit-pos':'profit-neg'}">${fmt(o.profit)}</td>
-    <td><select onchange="updateOrderStatus('${o.id}',this.value)" style="border:1px solid #ddd;border-radius:4px;padding:2px">
+    <td class="${+o.profit>=0?'profit-pos':'profit-neg'}">${fmt(o.profit)}</td>
+    <td><select onchange="updateOrderStatus('${o.id}',this.value)" style="border:1px solid var(--border);border-radius:4px;padding:3px;background:var(--input-bg);color:var(--text)">
       ${['pending','processing','completed','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}
     </select></td>
     <td>${fmtDate(o.created_at)}</td>
     <td><button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')">🗑</button></td>
   </tr>`).join('');
-  document.getElementById('orders-body').innerHTML = rows||'<tr><td colspan="7" style="text-align:center">No orders</td></tr>';
+  document.getElementById('orders-body').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;color:var(--sub);padding:30px">No orders yet</td></tr>';
 }
 
-async function updateOrderStatus(id, status) {
-  await fetch('/api/orders/'+id+'/status',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
-}
-async function deleteOrder(id) {
-  if(confirm('Delete?')) { await fetch('/api/orders/'+id,{method:'DELETE'}); loadOrders(); }
-}
+async function updateOrderStatus(id,status){await fetch('/api/orders/'+id+'/status',{method:'PUT',headers:headers(),body:JSON.stringify({status})});}
+async function deleteOrder(id){if(confirm('Delete?')){await fetch('/api/orders/'+id,{method:'DELETE',headers:hdr()});loadOrders();}}
 
-// ── INVOICES ───────────────────────────────────────────────────────
-async function saveInvoice() {
-  const lines = document.getElementById('inv-items-text').value.split('\n').filter(l=>l.trim());
-  const items = lines.map(l=>{const p=l.split(','); return {name:p[0]?.trim(),qty:+p[1]||1,price:+p[2]||0};});
-  const r = await fetch('/api/invoices',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    customer_name: document.getElementById('inv-name').value,
-    customer_phone: document.getElementById('inv-phone').value,
-    items: JSON.stringify(items),
-    discount: document.getElementById('inv-discount').value,
-    due_date: document.getElementById('inv-due').value
-  })}).then(r=>r.json());
-  alert('✅ Invoice '+r.invoice_no+' created!\nTotal: '+fmt(r.total));
+function exportCSV(){window.open('/api/export/orders?token='+TOKEN);}
+
+// ── INVOICES ─────────────────────────────────────────────────────────
+async function saveInvoice(){
+  const lines=document.getElementById('inv-items-text').value.split('\n').filter(l=>l.trim());
+  const items=lines.map(l=>{const p=l.split(',');return{name:p[0]?.trim(),qty:+p[1]||1,price:+p[2]||0};});
+  const r=await fetch('/api/invoices',{method:'POST',headers:headers(),body:JSON.stringify({customer_name:document.getElementById('inv-name').value,customer_phone:document.getElementById('inv-phone').value,items:JSON.stringify(items),discount:document.getElementById('inv-discount').value,due_date:document.getElementById('inv-due').value})}).then(r=>r.json());
+  alert(`✅ Invoice ${r.invoice_no}\nTotal: ${fmt(r.total)}`);
   closeModal('modal-invoice'); loadInvoices();
 }
 
-async function loadInvoices() {
-  const data = await fetch('/api/invoices').then(r=>r.json());
-  const rows = data.map(inv=>`<tr>
-    <td><strong>${inv.invoice_no}</strong></td><td>${inv.customer_name}</td>
-    <td>${fmt(inv.total)}</td>
+async function loadInvoices(){
+  const data=await fetch('/api/invoices',{headers:hdr()}).then(r=>r.json());
+  const rows=data.map(inv=>`<tr>
+    <td><strong>${inv.invoice_no}</strong></td><td>${inv.customer_name}</td><td>${fmt(inv.total)}</td>
     <td><span class="badge badge-${inv.status==='paid'?'success':'danger'}">${inv.status}</span></td>
     <td>${fmtDate(inv.due_date)||'-'}</td>
-    <td>${inv.status!=='paid'?`<button class="btn btn-success btn-sm" onclick="markPaid('${inv.id}')">✅ Mark Paid</button>`:''}</td>
+    <td style="display:flex;gap:6px">
+      ${inv.status!=='paid'?`<button class="btn btn-success btn-sm" onclick="markPaid('${inv.id}')">✅ Paid</button>`:''}
+      <button class="btn btn-outline btn-sm" onclick="printInvoice('${inv.id}')">🖨️</button>
+    </td>
   </tr>`).join('');
-  document.getElementById('invoices-body').innerHTML = rows||'<tr><td colspan="6" style="text-align:center">No invoices</td></tr>';
+  document.getElementById('invoices-body').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;color:var(--sub);padding:30px">No invoices</td></tr>';
 }
 
-async function markPaid(id) {
-  await fetch('/api/invoices/'+id+'/pay',{method:'PUT'}); loadInvoices();
+async function markPaid(id){await fetch('/api/invoices/'+id+'/pay',{method:'PUT',headers:hdr()});loadInvoices();}
+
+async function printInvoice(id){
+  const invs=await fetch('/api/invoices',{headers:hdr()}).then(r=>r.json());
+  const inv=invs.find(i=>i.id===id); if(!inv) return;
+  const items=JSON.parse(inv.items||'[]');
+  const rows=items.map(i=>`<tr><td>${i.name}</td><td style="text-align:center">${i.qty}</td><td style="text-align:right">$${i.price}</td><td style="text-align:right">$${(i.price*i.qty).toFixed(2)}</td></tr>`).join('');
+  const shopName=document.getElementById('shop-name-display').textContent;
+  document.getElementById('print-invoice').innerHTML=`
+    <div style="max-width:600px;margin:0 auto;font-family:sans-serif">
+      <div style="text-align:center;border-bottom:2px solid #333;padding-bottom:16px;margin-bottom:16px">
+        <h1 style="font-size:28px;margin:0">💰 ${shopName}</h1>
+        <p style="color:#666;margin:4px 0">INVOICE</p>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:20px">
+        <div><strong>Invoice#:</strong> ${inv.invoice_no}<br><strong>Date:</strong> ${fmtDate(inv.created_at)}<br><strong>Due:</strong> ${fmtDate(inv.due_date)||'N/A'}</div>
+        <div style="text-align:right"><strong>Bill To:</strong><br>${inv.customer_name}<br>${inv.customer_phone||''}</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+        <thead><tr style="background:#f0f0f0"><th style="padding:8px;text-align:left">Item</th><th style="padding:8px;text-align:center">Qty</th><th style="padding:8px;text-align:right">Price</th><th style="padding:8px;text-align:right">Total</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div style="text-align:right;border-top:2px solid #333;padding-top:12px">
+        <div>Subtotal: ${fmt(inv.subtotal)}</div>
+        ${+inv.discount>0?`<div>Discount: -${fmt(inv.discount)}</div>`:''}
+        <div style="font-size:20px;font-weight:800;margin-top:8px">TOTAL: ${fmt(inv.total)}</div>
+        <div style="color:${inv.status==='paid'?'green':'red'};font-weight:700;margin-top:4px">${inv.status==='paid'?'✅ PAID':'⚠️ UNPAID'}</div>
+      </div>
+      <div style="text-align:center;margin-top:30px;color:#999;font-size:12px">Thank you for your business! 🙏</div>
+    </div>`;
+  window.print();
 }
 
-// ── CUSTOMERS ──────────────────────────────────────────────────────
-async function saveCustomer() {
-  await fetch('/api/customers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    name: document.getElementById('c-name').value,
-    phone: document.getElementById('c-phone').value,
-    address: document.getElementById('c-address').value,
-    note: document.getElementById('c-note').value
-  })});
+// ── CUSTOMERS ────────────────────────────────────────────────────────
+async function saveCustomer(){
+  await fetch('/api/customers',{method:'POST',headers:headers(),body:JSON.stringify({name:document.getElementById('c-name').value,phone:document.getElementById('c-phone').value,address:document.getElementById('c-address').value,note:document.getElementById('c-note').value})});
   closeModal('modal-customer'); loadCustomers();
 }
 
-async function loadCustomers() {
-  const data = await fetch('/api/customers').then(r=>r.json());
-  const rows = data.map(c=>`<tr>
+async function loadCustomers(){
+  const data=await fetch('/api/customers',{headers:hdr()}).then(r=>r.json());
+  const rows=data.map(c=>`<tr>
     <td><strong>${c.name}</strong></td><td>${c.phone||'-'}</td>
     <td>${c.total_orders}</td><td>${fmt(c.total_spent)}</td>
     <td>${fmtDate(c.last_order)||'Never'}</td>
-    <td><button class="btn btn-primary btn-sm" onclick="sendFollowup('${c.id}','${c.name}','${c.last_order||''}')">💬 Follow-up</button></td>
+    <td><button class="btn btn-primary btn-sm" onclick="sendFollowup('${c.name}','${c.last_order||''}')">💬</button></td>
   </tr>`).join('');
-  document.getElementById('customers-body').innerHTML = rows||'<tr><td colspan="6" style="text-align:center">No customers</td></tr>';
+  document.getElementById('customers-body').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;color:var(--sub);padding:30px">No customers yet</td></tr>';
 }
 
-async function sendFollowup(id, name, lastOrder) {
-  const msg = await fetch('/api/customers/followup-message',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({customer_name:name,last_order:lastOrder,products:''})}).then(r=>r.json());
-  alert('💬 Follow-up Message:\n\n'+msg.message);
+async function sendFollowup(name,last){
+  const r=await fetch('/api/customers/followup-message',{method:'POST',headers:headers(),body:JSON.stringify({customer_name:name,last_order:last})}).then(r=>r.json());
+  alert('💬 Follow-up Message:\n\n'+r.message);
 }
 
-// ── PROFIT ─────────────────────────────────────────────────────────
-async function loadProfit() {
-  const data = await fetch('/api/reports?period=month').then(r=>r.json());
-  const expenses = await fetch('/api/expenses').then(r=>r.json());
-  document.getElementById('profit-stats').innerHTML = `
-    <div class="stat-card" style="border-color:#00b894"><span class="ico">💰</span><div class="val">${fmt(data.sales)}</div><div class="lbl">Sales ខែនេះ</div></div>
-    <div class="stat-card" style="border-color:#6c5ce7"><span class="ico">📈</span><div class="val">${fmt(data.profit)}</div><div class="lbl">Gross Profit</div></div>
-    <div class="stat-card" style="border-color:#d63031"><span class="ico">💸</span><div class="val">${fmt(data.expenses)}</div><div class="lbl">Expenses</div></div>
-    <div class="stat-card" style="border-color:#00cec9"><span class="ico">💎</span><div class="val">${fmt(data.netProfit)}</div><div class="lbl">Net Profit</div></div>
+// ── PROFIT ───────────────────────────────────────────────────────────
+async function loadProfit(){
+  const [data,expenses]=await Promise.all([fetch('/api/reports?period=month',{headers:hdr()}).then(r=>r.json()),fetch('/api/expenses',{headers:hdr()}).then(r=>r.json())]);
+  document.getElementById('profit-stats').innerHTML=`
+    <div class="stat-card" style="--accent:#00b894"><span class="stat-ico">💰</span><div class="stat-val">${fmt(data.sales)}</div><div class="stat-lbl">Sales</div></div>
+    <div class="stat-card" style="--accent:#6c5ce7"><span class="stat-ico">📈</span><div class="stat-val">${fmt(data.profit)}</div><div class="stat-lbl">Gross Profit</div></div>
+    <div class="stat-card" style="--accent:#d63031"><span class="stat-ico">💸</span><div class="stat-val">${fmt(data.expenses)}</div><div class="stat-lbl">Expenses</div></div>
+    <div class="stat-card" style="--accent:#00cec9"><span class="stat-ico">💎</span><div class="stat-val">${fmt(data.netProfit)}</div><div class="stat-lbl">Net Profit</div></div>
   `;
-  const rows = expenses.slice(0,20).map(e=>`<tr><td>${e.category}</td><td class="profit-neg">${fmt(e.amount)}</td><td>${e.note||'-'}</td><td>${e.date||'-'}</td></tr>`).join('');
-  document.getElementById('expenses-body').innerHTML = rows||'<tr><td colspan="4" style="text-align:center">No expenses</td></tr>';
-}
-
-async function saveExpense() {
-  await fetch('/api/expenses',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    category: document.getElementById('exp-cat').value,
-    amount: document.getElementById('exp-amount').value,
-    note: document.getElementById('exp-note').value,
-    date: document.getElementById('exp-date').value
-  })});
-  closeModal('modal-expense'); loadProfit();
-}
-
-// ── MARKETING ──────────────────────────────────────────────────────
-async function generateCampaign() {
-  const fd = new FormData();
-  fd.append('type','ads');
-  fd.append('product_name', document.getElementById('camp-products').value);
-  fd.append('price','');
-  fd.append('extra', `Campaign: ${document.getElementById('camp-name').value}\nBudget: $${document.getElementById('camp-budget').value}\nTarget: ${document.getElementById('camp-target').value}`);
-  document.getElementById('camp-loading').style.display='block';
-  document.getElementById('camp-result').style.display='none';
-  const r = await fetch('/api/ai/generate',{method:'POST',body:fd}).then(r=>r.json());
-  document.getElementById('camp-result').textContent = r.result||r.error;
-  document.getElementById('camp-result').style.display='block';
-  document.getElementById('camp-loading').style.display='none';
-}
-
-// ── FREELANCER ─────────────────────────────────────────────────────
-async function saveProject() {
-  await fetch('/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    client_name: document.getElementById('proj-client').value,
-    client_phone: document.getElementById('proj-phone').value,
-    title: document.getElementById('proj-title').value,
-    description: document.getElementById('proj-desc').value,
-    price: document.getElementById('proj-price').value,
-    cost: document.getElementById('proj-cost').value,
-    deadline: document.getElementById('proj-deadline').value
-  })});
-  closeModal('modal-project'); loadProjects();
-}
-
-async function loadProjects() {
-  const data = await fetch('/api/projects').then(r=>r.json());
-  const totalEarned = data.filter(p=>p.status==='completed').reduce((s,p)=>s+p.price,0);
-  const active = data.filter(p=>p.status==='active').length;
-  document.getElementById('freelancer-stats').innerHTML = `
-    <div class="stat-card" style="border-color:#6c5ce7"><span class="ico">💻</span><div class="val">${data.length}</div><div class="lbl">Total Projects</div></div>
-    <div class="stat-card" style="border-color:#00cec9"><span class="ico">⚡</span><div class="val">${active}</div><div class="lbl">Active</div></div>
-    <div class="stat-card" style="border-color:#00b894"><span class="ico">💰</span><div class="val">${fmt(totalEarned)}</div><div class="lbl">Total Earned</div></div>
-  `;
-  const rows = data.map(p=>`<tr>
-    <td><strong>${p.client_name}</strong></td><td>${p.title}</td>
-    <td>${fmt(p.price)}</td><td>${fmt(p.cost)}</td>
-    <td class="${p.price-p.cost>=0?'profit-pos':'profit-neg'}">${fmt(p.price-p.cost)}</td>
-    <td><select onchange="updateProjectStatus('${p.id}',this.value)" style="border:1px solid #ddd;border-radius:4px;padding:2px">
-      ${['active','completed','cancelled'].map(s=>`<option value="${s}" ${p.status===s?'selected':''}>${s}</option>`).join('')}
-    </select></td>
-    <td>${fmtDate(p.deadline)||'-'}</td>
-    <td></td>
-  </tr>`).join('');
-  document.getElementById('projects-body').innerHTML = rows||'<tr><td colspan="8" style="text-align:center">No projects</td></tr>';
-}
-
-async function updateProjectStatus(id, status) {
-  await fetch('/api/projects/'+id+'/status',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
-}
-
-// ── REPORTS ────────────────────────────────────────────────────────
-async function loadReports(period) {
-  currentReport.period = period;
-  const data = await fetch('/api/reports?period='+period).then(r=>r.json());
-  document.getElementById('report-stats').innerHTML = `
-    <div class="stat-card" style="border-color:#6c5ce7"><span class="ico">💰</span><div class="val">${fmt(data.sales)}</div><div class="lbl">Total Sales</div></div>
-    <div class="stat-card" style="border-color:#00b894"><span class="ico">📈</span><div class="val">${fmt(data.profit)}</div><div class="lbl">Gross Profit</div></div>
-    <div class="stat-card" style="border-color:#d63031"><span class="ico">💸</span><div class="val">${fmt(data.expenses)}</div><div class="lbl">Expenses</div></div>
-    <div class="stat-card" style="border-color:#00cec9"><span class="ico">💎</span><div class="val">${fmt(data.netProfit)}</div><div class="lbl">Net Profit</div></div>
-    <div class="stat-card" style="border-color:#fdcb6e"><span class="ico">🛒</span><div class="val">${data.orders}</div><div class="lbl">Orders</div></div>
-  `;
-  // Mini chart
-  if(data.dailySales && data.dailySales.length > 0) {
-    const max = Math.max(...data.dailySales.map(d=>d.sales), 1);
-    const bars = data.dailySales.slice(-14).map(d=>`<div class="bar" style="height:${Math.max(4,d.sales/max*100)}%" title="${d.date}: ${fmt(d.sales)}"></div>`).join('');
+  const rows=expenses.slice(0,20).map(e=>`<tr><td>${e.category}</td><td class="profit-neg">${fmt(e.amount)}</td><td>${e.note||'-'}</td><td>${fmtDate(e.date)}</td></tr>`).join('');
+  document.getElementById('expenses-body').innerHTML=rows||'<tr><td colspan="4" style="text-align:center;color:var(--sub)">No expenses</td></tr>';
+  if(data.dailySales?.length>0){
+    const labels=data.dailySales.map(x=>x.date?.toString().slice(5,10));
+    const vals=data.dailySales.map(x=>+x.profit||0);
+    profitChartInst=drawChart('profit-chart',labels,vals,'Profit','#00b894',profitChartInst);
   }
 }
 
-async function getAIAnalysis() {
-  const data = await fetch('/api/reports?period='+currentReport.period).then(r=>r.json());
-  const r = await fetch('/api/ai/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data, period: currentReport.period})}).then(r=>r.json());
-  const el = document.getElementById('ai-analysis');
-  el.textContent = r.analysis; el.style.display='block';
+async function saveExpense(){
+  await fetch('/api/expenses',{method:'POST',headers:headers(),body:JSON.stringify({category:document.getElementById('exp-cat').value,amount:document.getElementById('exp-amount').value,note:document.getElementById('exp-note').value,date:document.getElementById('exp-date').value})});
+  closeModal('modal-expense'); loadProfit();
 }
 
-// ── FILTER TABLE ───────────────────────────────────────────────────
-function filterTable(input, tableId) {
-  const q = input.value.toLowerCase();
-  document.querySelectorAll('#'+tableId+' tbody tr').forEach(tr=>{
-    tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
-  });
+// ── MARKETING ────────────────────────────────────────────────────────
+async function generateCampaign(){
+  const fd=new FormData();
+  fd.append('type','ads'); fd.append('product_name',document.getElementById('camp-products').value);
+  fd.append('price',''); fd.append('extra',`Campaign:${document.getElementById('camp-name').value}\nBudget:$${document.getElementById('camp-budget').value}\nTarget:${document.getElementById('camp-target').value}`);
+  document.getElementById('camp-loading').style.display='block'; document.getElementById('camp-result').style.display='none';
+  const r=await fetch('/api/ai/generate',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd}).then(r=>r.json());
+  document.getElementById('camp-result').textContent=r.result||r.error; document.getElementById('camp-result').style.display='block';
+  document.getElementById('camp-loading').style.display='none';
 }
 
-// ── INIT ───────────────────────────────────────────────────────────
-loadDashboard();
+// ── FREELANCER ───────────────────────────────────────────────────────
+async function saveProject(){
+  await fetch('/api/projects',{method:'POST',headers:headers(),body:JSON.stringify({client_name:document.getElementById('proj-client').value,client_phone:document.getElementById('proj-phone').value,title:document.getElementById('proj-title').value,description:document.getElementById('proj-desc').value,price:document.getElementById('proj-price').value,cost:document.getElementById('proj-cost').value,deadline:document.getElementById('proj-deadline').value})});
+  closeModal('modal-project'); loadProjects();
+}
+
+async function loadProjects(){
+  const data=await fetch('/api/projects',{headers:hdr()}).then(r=>r.json());
+  const earned=data.filter(p=>p.status==='completed').reduce((s,p)=>s+(+p.price||0),0);
+  document.getElementById('freelancer-stats').innerHTML=`
+    <div class="stat-card" style="--accent:#6c5ce7"><span class="stat-ico">💻</span><div class="stat-val">${data.length}</div><div class="stat-lbl">Projects</div></div>
+    <div class="stat-card" style="--accent:#00cec9"><span class="stat-ico">⚡</span><div class="stat-val">${data.filter(p=>p.status==='active').length}</div><div class="stat-lbl">Active</div></div>
+    <div class="stat-card" style="--accent:#00b894"><span class="stat-ico">💰</span><div class="stat-val">${fmt(earned)}</div><div class="stat-lbl">Total Earned</div></div>
+  `;
+  const rows=data.map(p=>`<tr>
+    <td><strong>${p.client_name}</strong></td><td>${p.title}</td><td>${fmt(p.price)}</td>
+    <td class="${p.price-p.cost>=0?'profit-pos':'profit-neg'}">${fmt(p.price-p.cost)}</td>
+    <td><select onchange="updateProjectStatus('${p.id}',this.value)" style="border:1px solid var(--border);border-radius:4px;padding:3px;background:var(--input-bg);color:var(--text)">
+      ${['active','completed','cancelled'].map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}
+    </select></td>
+    <td>${fmtDate(p.deadline)||'-'}</td>
+  </tr>`).join('');
+  document.getElementById('projects-body').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;color:var(--sub);padding:30px">No projects</td></tr>';
+}
+
+async function updateProjectStatus(id,status){await fetch('/api/projects/'+id+'/status',{method:'PUT',headers:headers(),body:JSON.stringify({status})});}
+
+// ── REPORTS ──────────────────────────────────────────────────────────
+async function loadReports(period){
+  currentReport.period=period;
+  const data=await fetch('/api/reports?period='+period,{headers:hdr()}).then(r=>r.json());
+  document.getElementById('report-stats').innerHTML=`
+    <div class="stat-card" style="--accent:#6c5ce7"><span class="stat-ico">💰</span><div class="stat-val">${fmt(data.sales)}</div><div class="stat-lbl">Sales</div></div>
+    <div class="stat-card" style="--accent:#00b894"><span class="stat-ico">📈</span><div class="stat-val">${fmt(data.profit)}</div><div class="stat-lbl">Gross Profit</div></div>
+    <div class="stat-card" style="--accent:#d63031"><span class="stat-ico">💸</span><div class="stat-val">${fmt(data.expenses)}</div><div class="stat-lbl">Expenses</div></div>
+    <div class="stat-card" style="--accent:#00cec9"><span class="stat-ico">💎</span><div class="stat-val">${fmt(data.netProfit)}</div><div class="stat-lbl">Net Profit</div></div>
+    <div class="stat-card" style="--accent:#fdcb6e"><span class="stat-ico">🛒</span><div class="stat-val">${data.orders}</div><div class="stat-lbl">Orders</div></div>
+  `;
+  if(data.dailySales?.length>0){
+    const labels=data.dailySales.map(x=>x.date?.toString().slice(5,10));
+    const vals=data.dailySales.map(x=>+x.sales||0);
+    reportChartInst=drawChart('report-chart',labels,vals,'Sales','#6c5ce7',reportChartInst);
+  }
+}
+
+async function getAIAnalysis(){
+  const data=await fetch('/api/reports?period='+currentReport.period,{headers:hdr()}).then(r=>r.json());
+  const r=await fetch('/api/ai/report',{method:'POST',headers:headers(),body:JSON.stringify({...data,period:currentReport.period})}).then(r=>r.json());
+  const el=document.getElementById('ai-analysis'); el.textContent=r.analysis; el.style.display='block';
+}
+
+// ── FILTER ───────────────────────────────────────────────────────────
+function filterTable(input,tableId){
+  const q=input.value.toLowerCase();
+  document.querySelectorAll('#'+tableId+' tbody tr').forEach(tr=>{tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none';});
+}
 </script>
 </body>
 </html>
