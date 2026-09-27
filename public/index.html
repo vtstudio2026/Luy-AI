@@ -384,7 +384,7 @@ tr:hover td { background: #f8f9ff; }
                 🔊 Preview Voice
               </button>
               <button class="btn btn-success btn-sm" onclick="generateVideoMP4()">
-                🎬 Download MP4
+                ⬇️ Download MP3
               </button>
             </div>
 
@@ -1356,7 +1356,7 @@ async function generateVideoMP4() {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = `luy-ai-${selectedVoice}-${Date.now()}.mp4`;
+    a.download = `luy-ai-${selectedVoice}-${Date.now()}.mp3`;
     a.click();
 
     status.innerHTML = '✅ MP4 downloaded!';
