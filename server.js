@@ -330,3 +330,79 @@ initDB().then(()=>{
     console.log(`📦 PostgreSQL: ${process.env.DATABASE_URL?'Connected ✅':'Not set ❌'}`);
   });
 }).catch(e=>{console.error('❌ DB init failed:',e.message);process.exit(1);});
+
+// ── ADMIN MIDDLEWARE ──────────────────────────────────────────────────
+function adminAuth(req, res, next) {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const user = jwt.verify(token, JWT_SECRET);
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@luyai.com';
+    if (user.email !== ADMIN_EMAIL && user.role !== 'admin')
+      return res.status(403).json({ error: 'Admin only!' });
+    req.user = user;
+    next();
+  } catch { res.status(401).json({ error: 'Invalid token' }); }
+}
+
+// ── ADMIN ROUTES ──────────────────────────────────────────────────────
+
+// All users
+app.get('/api/admin/users', adminAuth, async (req, res) => {
+  const users = await db.all(`
+    SELECT u.id, u.name, u.email, u.shop_name, u.plan, u.created_at,
+      (SELECT COUNT(*) FROM orders o WHERE o.user_id=u.id) as total_orders,
+      (SELECT COALESCE(SUM(total),0) FROM orders o WHERE o.user_id=u.id AND status!='cancelled') as total_sales,
+      (SELECT COUNT(*) FROM products p WHERE p.user_id=u.id) as total_products
+    FROM users u ORDER BY u.created_at DESC
+  `);
+  res.json(users);
+});
+
+// Update user plan
+app.put('/api/admin/users/:id/plan', adminAuth, async (req, res) => {
+  const { plan } = req.body;
+  await db.run('UPDATE users SET plan=$1 WHERE id=$2', [plan, req.params.id]);
+  res.json({ success: true });
+});
+
+// Delete user
+app.delete('/api/admin/users/:id', adminAuth, async (req, res) => {
+  await db.run('DELETE FROM orders WHERE user_id=$1', [req.params.id]);
+  await db.run('DELETE FROM products WHERE user_id=$1', [req.params.id]);
+  await db.run('DELETE FROM customers WHERE user_id=$1', [req.params.id]);
+  await db.run('DELETE FROM invoices WHERE user_id=$1', [req.params.id]);
+  await db.run('DELETE FROM expenses WHERE user_id=$1', [req.params.id]);
+  await db.run('DELETE FROM projects WHERE user_id=$1', [req.params.id]);
+  await db.run('DELETE FROM users WHERE id=$1', [req.params.id]);
+  res.json({ success: true });
+});
+
+// System stats
+app.get('/api/admin/stats', adminAuth, async (req, res) => {
+  const [users, orders, revenue, products, freeUsers, proUsers] = await Promise.all([
+    db.one('SELECT COUNT(*) v FROM users'),
+    db.one("SELECT COUNT(*) v FROM orders WHERE status!='cancelled'"),
+    db.one("SELECT COALESCE(SUM(total),0) v FROM orders WHERE status!='cancelled'"),
+    db.one('SELECT COUNT(*) v FROM products'),
+    db.one("SELECT COUNT(*) v FROM users WHERE plan='free'"),
+    db.one("SELECT COUNT(*) v FROM users WHERE plan!='free'"),
+  ]);
+  const daily = await db.all(`
+    SELECT created_at::date as date, COUNT(*) as new_users
+    FROM users WHERE created_at >= NOW()-INTERVAL '30 days'
+    GROUP BY created_at::date ORDER BY date
+  `);
+  res.json({
+    totalUsers: +users.v, totalOrders: +orders.v,
+    totalRevenue: +revenue.v, totalProducts: +products.v,
+    freeUsers: +freeUsers.v, proUsers: +proUsers.v,
+    dailySignups: daily
+  });
+});
+
+// Check if current user is admin
+app.get('/api/admin/check', auth, async (req, res) => {
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@luyai.com';
+  res.json({ isAdmin: req.user.email === ADMIN_EMAIL });
+});
