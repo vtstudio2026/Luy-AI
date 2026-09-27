@@ -225,7 +225,16 @@ tr:hover td { background: #f8f9ff; }
 .loading { text-align: center; color: var(--primary); animation: pulse 1s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-/* PROFIT CHART */
+/* VOICE BUTTONS */
+.voice-btn {
+  padding: 8px 16px; border: 2px solid var(--border);
+  border-radius: 20px; background: #f8f9ff; cursor: pointer;
+  font-size: 13px; font-weight: 600; transition: all 0.2s; color: var(--text);
+}
+.voice-btn:hover { border-color: var(--primary); color: var(--primary); }
+.voice-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+
 .profit-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 20px; }
 .profit-card { text-align: center; padding: 20px; border-radius: 14px; }
 .profit-card.income { background: #dcfce7; }
@@ -346,7 +355,47 @@ tr:hover td { background: #f8f9ff; }
             <strong>Result</strong>
             <button class="btn btn-secondary btn-sm" onclick="copyAiResult()">📋 Copy</button>
           </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <strong>Result</strong>
+            <button class="btn btn-secondary btn-sm" onclick="copyAiResult()">📋 Copy</button>
+          </div>
           <div class="ai-result" id="aiResult">AI result will appear here...</div>
+
+          <!-- VIDEO SECTION -->
+          <div id="videoSection" style="display:none;margin-top:16px;border-top:2px solid var(--border);padding-top:16px">
+            <div style="margin-bottom:10px">
+              <strong style="font-size:13px">🎬 Generate Video MP4</strong>
+            </div>
+
+            <!-- Voice selector -->
+            <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+              <button class="voice-btn active" data-voice="piseth" onclick="selectVoice(this,'piseth')">
+                🎙️ Piseth (ប្រុស)
+              </button>
+              <button class="voice-btn" data-voice="sreymom" onclick="selectVoice(this,'sreymom')">
+                🎙️ Sreymom (ស្រី)
+              </button>
+            </div>
+
+            <!-- Action buttons -->
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+              <button class="btn btn-primary btn-sm" onclick="previewAudio()">
+                🔊 Preview Voice
+              </button>
+              <button class="btn btn-success btn-sm" onclick="generateVideoMP4()">
+                🎬 Download MP4
+              </button>
+            </div>
+
+            <!-- Audio preview player -->
+            <audio id="audioPreview" controls style="width:100%;display:none;margin-bottom:10px;border-radius:8px"></audio>
+
+            <!-- Video generating status -->
+            <div id="videoStatus" style="display:none;text-align:center;padding:12px;background:#f8f9ff;border-radius:10px;color:var(--primary)">
+              <div class="loading">⏳ Generating MP4...</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1206,7 +1255,14 @@ async function generateAI() {
       body: formData,
     });
     const data = await r.json();
-    resultEl.textContent = data.result || data.error || 'Error generating';
+    const text = data.result || data.error || 'Error generating';
+    resultEl.textContent = text;
+    // Show video section if result is valid
+    if (data.result) {
+      document.getElementById('videoSection').style.display = 'block';
+      document.getElementById('audioPreview').style.display = 'none';
+      document.getElementById('videoStatus').style.display = 'none';
+    }
   } catch(e) {
     resultEl.textContent = 'Error: ' + e.message;
   }
@@ -1215,6 +1271,87 @@ async function generateAI() {
 function copyAiResult() {
   const text = document.getElementById('aiResult').textContent;
   navigator.clipboard.writeText(text).then(() => alert('Copied!'));
+}
+
+// ==================== VOICE / VIDEO ====================
+let selectedVoice = 'piseth';
+
+function selectVoice(el, voice) {
+  document.querySelectorAll('.voice-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedVoice = voice;
+}
+
+async function previewAudio() {
+  const text = document.getElementById('aiResult').textContent.trim();
+  if (!text || text === 'AI result will appear here...') return alert('Generate AI content first!');
+
+  const player = document.getElementById('audioPreview');
+  player.style.display = 'block';
+  player.src = '';
+  player.controls = true;
+
+  try {
+    const r = await fetch('/api/ai/tts-audio', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ text, voice: selectedVoice })
+    });
+
+    if (!r.ok) {
+      const err = await r.json();
+      return alert('Error: ' + err.error);
+    }
+
+    const blob = await r.blob();
+    player.src = URL.createObjectURL(blob);
+    player.play();
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function generateVideoMP4() {
+  const text = document.getElementById('aiResult').textContent.trim();
+  if (!text || text === 'AI result will appear here...') return alert('Generate AI content first!');
+
+  const status = document.getElementById('videoStatus');
+  status.style.display = 'block';
+  status.innerHTML = '<div class="loading">⏳ Generating MP4 video...</div>';
+
+  try {
+    const r = await fetch('/api/ai/tts-video', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ text, voice: selectedVoice })
+    });
+
+    if (!r.ok) {
+      const err = await r.json();
+      status.innerHTML = '<span style="color:red">❌ ' + err.error + '</span>';
+      return;
+    }
+
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+
+    // Auto download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `luy-ai-${selectedVoice}-${Date.now()}.mp4`;
+    a.click();
+
+    status.innerHTML = '✅ MP4 downloaded!';
+    setTimeout(() => { status.style.display = 'none'; }, 3000);
+  } catch(e) {
+    status.innerHTML = '<span style="color:red">❌ ' + e.message + '</span>';
+  }
 }
 </script>
 </body>
